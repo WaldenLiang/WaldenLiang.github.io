@@ -4,7 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="theme-color" content=#58b77a>
-  <title>Walden&#39;s 自画像</title>
+  <title>手撸 Promise 的思路分享 | Walden&#39;s 自画像</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Walden">
   <meta name="keywords" content="walden,blog,IT,程序员,Web前端,Web,前端,感性,理性">
@@ -63,7 +63,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 <meta name="generator" content="Hexo 6.1.0"></head>
 <body>
-<div id="page">
+<div class="single">
 <div class="popup search-popup local-search-popup">
   <div class="local-search-header clearfix">
     <span class="search-icon">
@@ -81,15 +81,16 @@
   <div id="local-search-result"></div>
 </div>
 
+<div id="page">
 <div class="header">
-  <div id="lx-aside" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/cover.min.jpeg)">
+  <div id="lx-aside" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/post_cover.min.jpeg)" data-stellar-background-ratio="0.5">
     <div class="overlay">
       <a href="javascript:;" class="popup-trigger" title="search"><i class="menu-item-icon fa fa-search fa-fw"></i></a>
-      <div class="featured">
+      <div class="page-title">
         <div class="avatar"><a href="/"><img src="https://avatars.githubusercontent.com/u/32896703?v=4" alt="Walden"></a></div>
-        <span>Walden</span>
-        <h1>Walden's 自画像</h1>
-        <span>我的身体存在一半理性，一半感性。它们合力扶直我的身体躯壳，以至于二十多年来跌倒还能站起来，继续前行。</span>
+        <span>2022-04-07</span>
+        <h2>手撸 Promise 的...</h2>
+        <div class="tags"><i class="fa fa-tag"></i><a class="tag-none-link" href="/tags/Javascript-Promise/" rel="tag">Javascript,Promise</a></div>
         
       </div>
     </div>
@@ -97,12 +98,9 @@
 </div>
 <div id="lx-main-content">
   <div class="lx-post">
-
-  <div class="lx-entry padding">
-    <div>
-      <h2 class="title"><a href="/2022/04/07/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0Promise/">手撸 Promise 的思路分享</a></h2>
-      <span class="lx-post-detail"><i class="fa fa-calendar-o"></i> 2022-04-07 | <i class="fa fa-folder-o"></i> <a class="category-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></span>
-      <p><p>前段时间在几个大牛作者的微信公众号上都看到了手撸 Promise 的文章，当时就觉得挺有意思，想自己也手撸一遍顺便检验一下基础，所以我当时没有看大佬们的代码实现，怕产生潜意识。正好这段时间比较空闲，于是撸了两个版本。第一版（v1）是第一次跑通用例的版本，很粗糙；而第二版（v2）是在第一版的基础上并结合官方测试用例的测试思路优化过后的版本，是我个人比较满意的版本，它可能不是最优版本（跑完 872 条用例耗时 16s），但应该是比较直观易懂的版本。</p>
+    <div class="lx-entry padding">
+      <div>
+        <p>前段时间在几个大牛作者的微信公众号上都看到了手撸 Promise 的文章，当时就觉得挺有意思，想自己也手撸一遍顺便检验一下基础，所以我当时没有看大佬们的代码实现，怕产生潜意识。正好这段时间比较空闲，于是撸了两个版本。第一版（v1）是第一次跑通用例的版本，很粗糙；而第二版（v2）是在第一版的基础上并结合官方测试用例的测试思路优化过后的版本，是我个人比较满意的版本，它可能不是最优版本（跑完 872 条用例耗时 16s），但应该是比较直观易懂的版本。</p>
 <p>这里贴出测试结果：</p>
 <pre class="line-numbers language-none"><code class="language-none">...省略前面内容
    The value is &#96;1&#96; with &#96;Number.prototype&#96; modified to have a &#96;then&#96; method
@@ -391,108 +389,41 @@ promise<span class="token punctuation">.</span><span class="token function">then
     <span class="token punctuation">&#125;</span>
   <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-</p>
-      <div class="post-button"><a class="btn" href="/2022/04/07/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0Promise/" rel="noopener"><i class="fa fa-angle-double-right fa-fw"></i>Read More</a></div>
+
+      </div>
     </div>
   </div>
-  <div class="lx-entry padding">
-    <div>
-      <h2 class="title"><a href="/2021/05/22/%E5%AE%8B%E5%B0%8F%E5%AE%9D%E5%8F%91%E8%B4%A2%E6%97%A5%E8%AE%B0%E8%A7%82%E5%90%8E%E6%84%9F/">宋小宝发财日记观后感</a></h2>
-      <span class="lx-post-detail"><i class="fa fa-calendar-o"></i> 2021-05-22 | <i class="fa fa-folder-o"></i> <a class="category-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></span>
-      <p><p>电影讲述了一个名字叫宋小宝的东北黑小伙跟随他的好兄弟（江湖人称二哥）到深圳打拼，一股热血就冲着发财。然而，他俩哥们到了大城市，因为没有文化，工作找不到，也没有地方住，风餐露宿，日子都只能在天桥底下度过。“发财”距离他们感觉非常遥远。但是小宝天天都在他的发财日记中记录着他的发财历程，嘴角都是挂着满足。</p>
-<p>一天早上，小宝醒来睁开眼睛，发现身边躺着似乎还未满月的婴儿，是弃婴。这回，小宝和二哥这道这是摊上麻烦了。于是他们多次计划找一个地方把婴儿给丢下，看看有没有好心人收留。但是善良的小宝不忍心，就又捡了回来。他俩就这么带着孩子，二哥外出找吃，小宝带孩子。</p>
-<p>直到有一天，这哥俩在公园的小湖边，救了一个满头白发老爷爷。随后老爷爷了解到小宝的情况，并且为了感恩就允许他俩住在了老爷爷的家里。碰巧老爷爷这里同样也住着一个离异的女人，叫做马露。由于一些误解，马露对小宝他俩稍有芥蒂。</p>
-<p>有了落脚的地方，日子算稳定些。小宝这时候才给小孩子取名为天意，他认为这一切的相遇和经历都是上天安排，小宝嘴边依旧带着熟悉的满足的笑容。</p>
-<p>此后，小宝就一边照顾着天意，一边边日复一日的找工作，做工作，换工作，再找工作。日子虽然过的很累，工作也很苦，但是淳朴的小宝并没有埋怨过生活一丝一毫。马露开始抛开对小宝的成见，他俩的关系稍稍缓和了。天意逐渐长大后，他叫小宝做爸爸，小宝为此感到所有努力都是值得的。</p>
-<p>天意到了该上学的年纪，小宝为了让天意能够上学，非常努力的工作，什么苦的，累的，危险的工作都做。而长大的天意意识到自己妈妈不在身边这一回事，逐渐感到自卑，对别人的眼光敏感，更在意父亲的感受和渴望父亲的多陪伴。然后努力工作的小宝却没有留意到这一点。天意因此着感到非常孤独，一直没有妈妈的他，让他心思非常敏感，学校的孩子也经常欺负他。就这样，天意越长大越叛逆，内心也越是责怪小宝。</p>
-<p>老爷爷越来越老，平时全靠小宝细心的照顾着。老爷爷眼看着，眼前这个跟自己毫无半点血缘关系的黑小伙，任劳任怨的照顾自己，眼里仿佛泛着泪光（也可能是我的泪光）。岁月不饶人，老爷爷安详的离开了人世。天意也就失去了疼爱他的爷爷了。</p>
-<p>这屋就剩小宝和马露了，二哥常出去“发财”，很早就不住在这里，长大的天意时常跟社会的小混混在一起，很少回家。一晚，小宝发现隔壁马露房子里起大火，连忙生死不顾的跑进去救人，险些丧生火中。经过这件事情，两人就这么在一起了。但是天意误以为小宝是为了马露而抛弃他妈妈，冷嘲热讽的话语，让小宝一气之下，把天意赶走了。走了的还有马露。</p>
-<p>这个时候的小宝才感觉到痛苦，仿佛失去了所有。</p>
-<p>他的二哥回来了，这位同苦共难的好兄弟对他还是依旧的不离不弃，有困难了，回来找小宝，发财了也回来找小宝。好兄弟有困难不会羞于开口，从来都是不离不弃（人生难得一知己，我太酸了）。</p>
-<p>后来天意无意间得到了小宝的那本发财日记，日记里面，没有记载怎么发财，怎么赚钱，记载的都是平平淡淡的日子，怎么抚养天意，怎么陪伴孩子的点点滴滴。天意这才了解到全部事情的经过，才知道自己深深的误解了小宝，于是拼命的赶回去。</p>
-<p>这个时候，小宝因为被天意借钱的债主找上门，意外被一棍爆头，鲜血淋漓，二哥背着他到医院，这个时候天意才赶到。</p>
-<p>幸好，性命保住了。</p>
-<p>大难不死必有后福，孩子解除了误解，马露也回到身边，确定了关系，好兄弟一如既往的不离不弃。</p>
-<p>一个圆满的结局！！</p>
-<h2 id="观后感触"><a href="#观后感触" class="headerlink" title="观后感触"></a>观后感触</h2><p>故事让人感动的地方很多，比如天意和小宝，小宝和老爷爷之间没有血缘关系但是依旧真诚的爱，兄弟之间不离不弃的情感，小宝善良积极向上的人生态度等等。</p>
-<p>但是然我感受最深的还是那本发财日记，电影名字就叫做发财日记，以此为题并有深意。发财日记里面，记录的并不是什么赚钱的东西，而是记录着一个人，怎么面对生活，怎么积极向上，怎么对待身边的人和事，怎么给予别人爱，和最后怎么成就生活中的爱和幸福。这些爱和幸福并不是物质上的钱财，但是这些东西却是人生中最宝贵的财富。</p>
-<p>发财发财，正有此意！！！</p>
-</p>
-      <div class="post-button"><a class="btn" href="/2021/05/22/%E5%AE%8B%E5%B0%8F%E5%AE%9D%E5%8F%91%E8%B4%A2%E6%97%A5%E8%AE%B0%E8%A7%82%E5%90%8E%E6%84%9F/" rel="noopener"><i class="fa fa-angle-double-right fa-fw"></i>Read More</a></div>
-    </div>
-  </div>
-  <div class="lx-entry padding">
-    <div>
-      <h2 class="title"><a href="/2021/04/17/javascript%E4%B8%AD%E5%8F%AF%E7%BC%BA%E7%9C%81%E7%9A%84%E5%88%86%E5%8F%B7/">javascript中可缺省的分号</a></h2>
-      <span class="lx-post-detail"><i class="fa fa-calendar-o"></i> 2021-04-17 | <i class="fa fa-folder-o"></i> <a class="category-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></span>
-      <p><p>写 javascript 的都知道，代码中的分号(;)很多时候都可以省略不写的，原因是 javascript 的解析器能够自动的分隔语句。</p>
-<p>例如，如果两条语句分别在两行，通常分号是可以被省略的，或者一条语句的接下来是右花括号 }，那么这里的分号也可以省略的。但是有些情况下的分号是必须的，比如如下代码：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">a <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span> <span class="token comment">// 这里的分号可以省略</span>
-b <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span> <span class="token comment">// 这里的分号可以省略</span>
+</div>
+<div class="lx-navigation">
+	<div class="lx-cover next lx-cover-sm" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/footer-l.min.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="#">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Next</span>
+						<h3>No newer post</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+        <div class="lx-cover prev lx-cover-sm" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/footer-r.min.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2021/05/22/%E5%AE%8B%E5%B0%8F%E5%AE%9D%E5%8F%91%E8%B4%A2%E6%97%A5%E8%AE%B0%E8%A7%82%E5%90%8E%E6%84%9F/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Prev</span>
+						<h3>宋小宝发财日记...</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
 
-c <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
-d <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span> <span class="token comment">// 这里的第一个分号是必须的</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>注意，javascript 中并不是每一次的换行都会被当作分号，而是在不隐式的添加分号就无法解析代码的时候，才会加上分号，否则不会自动添加分号。例如，一下代码：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> a<span class="token punctuation">;</span>
-a <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
-console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>javascript 解析器会将代码理解为：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> a<span class="token punctuation">;</span>
-a <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
-console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>javascript 解析器在没有显性的分号时，会尽量的解析更长的代码，直至无法正确解析时，才会隐形的添加分号。</p>
-<p>因为如上原因，那么就会造成以下情况：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> y <span class="token operator">=</span> x <span class="token operator">+</span> <span class="token function">f</span><span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>程序员的本意可能时，这里是两个语句，但是 javascript 会理解为</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> y <span class="token operator">=</span> x <span class="token operator">+</span> <span class="token function">f</span><span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 解析器会尽可能的理解更长的语句</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>以上的这种情况，程序员的真实意图与 javascript 解析器解析出来的结果完全不一致，这种情况的问题，若果不注意，是很难发现的。</p>
-<p>所以，有些情况下就会出现防御性的分号，还用上一个例子演示。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> y <span class="token operator">=</span> x <span class="token operator">+</span> f<span class="token punctuation">;</span>
-<span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 这里的分号是一个防御性的分号，通常会出现在()或[]开头的语句中，比如;[1,2,3].join(',')</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>上面说到，javascript 会尽可能的理解更长的语句，但是涉及到 return，throw，yield，break 和 continue 语句时，则不然，若以上语句后面没有显性的分号且跟着换行符，解析器则会自动分隔语句，例如：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">return</span><span class="token punctuation">;</span>
-<span class="token boolean">true</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>javascript 理解为</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">return</span><span class="token punctuation">;</span>
-<span class="token boolean">true</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>这意味着，一定不能在 return，break 或 continue 等关键字后面的表达式之间加入换行符。</p>
-</p>
-      <div class="post-button"><a class="btn" href="/2021/04/17/javascript%E4%B8%AD%E5%8F%AF%E7%BC%BA%E7%9C%81%E7%9A%84%E5%88%86%E5%8F%B7/" rel="noopener"><i class="fa fa-angle-double-right fa-fw"></i>Read More</a></div>
-    </div>
-  </div>
-  <div class="lx-entry padding">
-    <div>
-      <h2 class="title"><a href="/2021/04/17/javascript%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%A4%A7%E5%B0%8F%E6%AF%94%E8%BE%83/">javascript中字符串的大小比较</a></h2>
-      <span class="lx-post-detail"><i class="fa fa-calendar-o"></i> 2021-04-17 | <i class="fa fa-folder-o"></i> <a class="category-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></span>
-      <p><pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token string">"two"</span> <span class="token operator">></span> <span class="token string">"three"</span> <span class="token comment">// => true 按照ASCII码表进行比较，从小到大顺序：0-9A-Za-z</span>
-<span class="token string">"a"</span> <span class="token operator">></span> <span class="token string">"99999999999999999"</span> <span class="token comment">// => true 不论长度</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>无论长度, 从左侧开始比较。</p>
-</p>
-      <div class="post-button"><a class="btn" href="/2021/04/17/javascript%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%A4%A7%E5%B0%8F%E6%AF%94%E8%BE%83/" rel="noopener"><i class="fa fa-angle-double-right fa-fw"></i>Read More</a></div>
-    </div>
-  </div>
-  <div class="lx-entry padding">
-    <div>
-      <h2 class="title"><a href="/2021/04/16/%E7%AB%8B%E5%8D%9A%E4%B8%BA%E8%AF%81%EF%BC%8C%E4%B8%A4%E4%B8%AA%E6%9C%88%E5%95%83%E5%AE%8C%E2%80%9C%E5%A4%A7%E7%8A%80%E7%89%9B%E2%80%9D/">温故知新，两个月啃完“大犀牛”</a></h2>
-      <span class="lx-post-detail"><i class="fa fa-calendar-o"></i> 2021-04-16 | <i class="fa fa-folder-o"></i> <a class="category-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></span>
-      <p><p>万丈高楼平地起，需盖高楼，必须要夯实地基，地基不稳，高楼也就塌了。工作上也是一个道理，无论什么行业，若想能够在行业内走得远，站得高，就必须有一个牢固的基础。业务思维固然重要，但是一切都需要建立在基础上。</p>
-<p>所以，就在刚刚，入手了一本 Javascript 大犀牛（第七版），计划能在两个月内啃完这本书，扫盲或者温故知新。每天在博客上总结记录一下学习内容。</p>
-</p>
-      <div class="post-button"><a class="btn" href="/2021/04/16/%E7%AB%8B%E5%8D%9A%E4%B8%BA%E8%AF%81%EF%BC%8C%E4%B8%A4%E4%B8%AA%E6%9C%88%E5%95%83%E5%AE%8C%E2%80%9C%E5%A4%A7%E7%8A%80%E7%89%9B%E2%80%9D/" rel="noopener"><i class="fa fa-angle-double-right fa-fw"></i>Read More</a></div>
-    </div>
-  </div>
-
-
-
+</div>
 
 <footer>
   <div>
@@ -500,8 +431,6 @@ console<span class="token punctuation">.</span><span class="token function">log<
   </div>
 </footer>
 
-  </div>
-</div>
 </div>
 
 <button class="hamburger hamburger--arrow-r" type="button" title="menu">
