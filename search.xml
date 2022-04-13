@@ -927,4 +927,34 @@ server<span class="token punctuation">.</span><span class="token function">start
         <tag>项目经历,webpack</tag>
       </tags>
   </entry>
+  <entry>
+    <title>v-show 与 v-if的区别</title>
+    <url>/2017/09/13/v-show-%E4%B8%8E-v-if%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>在 vue 中，<code>v-show</code>和<code>v-if</code>都是用来控制元素或组件的显示和隐藏，但是它们的显示和隐藏的实现机制有着根本性的差别。</p>
+<p><code>v-show</code>是通过控制 dom 元素的样式<code>display: none</code>的动态添加和去除来实现元素的显示和隐藏的。</p>
+<p>而<code>v-if</code>则是通过操作 dom 元素的创建，插入和移除来实现的。一般情况下通过<code>v-if</code>来控制组件的显示和隐藏会进行组件的创建，挂载和销毁，也就是说，<code>v-if</code>的变化会触发组件的生命周期钩子，但是如果通过<code>keep-alive</code>包裹起来，则不会触发创建，挂载和销毁，但是会触发激活钩子<code>activated</code>，即便如此，<code>v-if</code>的元素或组件的显示和隐藏都是通过 dom 操作实现的。</p>
+<p>如果明白以上的原理，那么就可以分析它们的优缺点和适用场景。</p>
+<p><code>v-show</code>的优点就是在切换显示隐藏这个动作上效率高，性能好，切占用资源少，因为 dom 元素一直都存在，只是简单修改样式而已。</p>
+<p>但是在首次页面渲染的时候，针对那些内容很多的元素，或者很复杂的组件，它们不要求立刻显示，但是仅通过<code>v-show</code>来控制隐藏的话，它们在页面渲染时还是会挂载在页面上的，这就造成了不必要的资源浪费，这也是<code>v-show</code>的一个明显缺点。</p>
+<p><code>v-show</code>的优缺点都是围绕着“dom 元素会存在于文档流中”这一个实际去分析的。针对一些 SSR 的项目，如果要求用户登录之后才能看到某些敏感内容，比如一些资源的下载链接，这个时候用<code>v-show</code>就起不到资源保护的作用，这又是<code>v-show</code>的另外一个缺点。</p>
+<p>而以上两个关于<code>v-show</code>的缺点，通过使用<code>v-if</code>都能非常好的得到解决。我认为<code>v-if</code>的一个最重要的优点就是它能够实现异步组件的功能，这能够非常好的防止资源浪费。</p>
+<p>但是，<code>v-if</code>的显示和隐藏切换的性能是比不过<code>v-show</code>的，即便通过<code>keep-alive</code>来缓存组件状态和数据。</p>
+<p>根据以上的分析可知它们的适用场景。</p>
+<p><code>v-show</code>的适用场景：</p>
+<ul>
+<li>需要频繁切换显示和隐藏的元素或组件；</li>
+<li>规模比较小的组件或者元素的显示隐藏控制；</li>
+</ul>
+<p><code>v-if</code>的适用场景：</p>
+<ul>
+<li>无需频繁切换显示隐藏的元素或组件；</li>
+<li>异步组件；</li>
+<li>资源保护；</li>
+<li>每次显示和隐藏都有触发生命周期钩子的需求；</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>vue,学习笔记</tag>
+      </tags>
+  </entry>
 </search>
