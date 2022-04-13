@@ -960,7 +960,7 @@ server<span class="token punctuation">.</span><span class="token function">start
   <entry>
     <title>vue组件生命周期的表现研究</title>
     <url>/2017/09/10/vue%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</url>
-    <content><![CDATA[<p>要了解透彻 vue 组件生命周期中每一个阶段做了什么工作，这不是一件简单的事情，这其中可能需要了解 vue 的底层原理，才能明白每一个阶段做了什么工作和为什么需要做这些工作。暂时还没有到研究 vue 底层原理的地步，所以本篇文章仅仅是分析组件或嵌套组件的一些情况的研究。</p>
+    <content><![CDATA[<p>要了解透彻 vue 组件生命周期中每一个阶段做了什么工作，这不是一件简单的事情，这其中可能需要了解 vue 的底层原理，才能明白每一个阶段做了什么工作和为什么需要做这些工作。暂时还没有到研究 vue 底层原理的地步，所以本篇文章仅仅是分析组件或嵌套组件的一些情况。</p>
 <p>要了解生命周期就肯定得知道生命周期钩子函数。所谓钩子函数其实际就是一个函数，而“钩子”的表意是该函数与某一个事物或者动作挂钩，当这个事物或动作发生指定的情况，与之连接的“钩子”就会被牵动，从而触发函数的执行。这里的表现与 dom 元素的事件监听非常相似，事实上无论是 dom 元素事件监听还是 vue 生命周期钩子都是一种订阅发布的设计模式。</p>
 <p>这里就不展开订阅发布设计模式的说明了，我们只需要知道，vue 生命周期钩子函数会在生命周期的某一刻被 vue 内部逻辑执行。</p>
 <p>这里实现一个超超超简单的例子。</p>
@@ -1047,7 +1047,7 @@ data<span class="token punctuation">.</span>count<span class="token operator">++
     &lt;button @click&#x3D;&quot;changeCount&quot;&gt;Change count&lt;&#x2F;button&gt;
     &lt;button @click&#x3D;&quot;changeCount2&quot;&gt;Change count2&lt;&#x2F;button&gt;
     &lt;button @click&#x3D;&quot;changeCount3&quot;&gt;Change count3&lt;&#x2F;button&gt;
-    &lt;button @click&#x3D;&quot;changeCountThrouthRefMethod&quot;&gt;Change count4&lt;&#x2F;button&gt;
+    &lt;button @click&#x3D;&quot;changeCountTroughRefMethod&quot;&gt;Change count4&lt;&#x2F;button&gt;
     &lt;ParentComp
       ref&#x3D;&quot;parentComp&quot;
       v-if&#x3D;&quot;isShow&quot;
@@ -1088,7 +1088,7 @@ export default &#123;
     changeCount3() &#123;
       this.count3++;
     &#125;,
-    changeCountThrouthRefMethod() &#123;
+    changeCountTroughRefMethod() &#123;
       this.count4++;
       this.$refs.parentComp.changeCount(this.count4);
     &#125;,
