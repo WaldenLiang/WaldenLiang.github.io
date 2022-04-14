@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content=#58b77a>
+  <title>vue组件间通讯 | Walden&#39;s 自画像</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Walden">
+  <meta name="keywords" content="walden,blog,IT,程序员,Web前端,Web,前端,感性,理性">
+  <meta name="description" content="Walden's 自画像 | 我的身体存在一半理性，一半感性。它们合力扶直我的身体躯壳，以至于二十多年来跌倒还能站起来，继续前行。">
+  <script id="hexo-configurations">
+  var CONFIG = {
+    root: '/',
+    theme: 'lx',
+    version: '0.4.3',
+    localsearch:{
+      "enable": true,
+      "trigger": "auto",
+      "top_n_per_article": 1,
+      "unescape": false,
+      "preload": false
+      },
+    path: 'search.xml'
+  };
+</script>
+
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/css/main.min.css">
+  
+  <style type="text/css">
+    pre,
+    code {
+      font-family: 'Fira Code', monospace;
+    }
+    html {
+      font-family: sans-serif;
+    }
+    body {
+      font-family: sans-serif;
+    }
+    h1, h2, h3, h4, h5, figure {
+      font-family: sans-serif;
+    }
+    .menu-container{
+      font-family: sans-serif;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/js/jquery.jside.menu.min.js"></script>
+	<script>
+	$(document).ready(function(){
+	$(".menu-container").jSideMenu({
+	    jSidePosition: "position-right",
+	    jSideSticky: true,
+	    jSideSkin: "",
+	     });
+	}); 
+	</script>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira Code:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
+<meta name="generator" content="Hexo 6.1.0"></head>
+<body>
+<div class="single">
+<div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Search..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+<div id="page">
+<div class="header">
+  <div id="lx-aside" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/post_cover.min.jpeg)" data-stellar-background-ratio="0.5">
+    <div class="overlay">
+      <a href="javascript:;" class="popup-trigger" title="search"><i class="menu-item-icon fa fa-search fa-fw"></i></a>
+      <div class="page-title">
+        <div class="avatar"><a href="/"><img src="https://avatars.githubusercontent.com/u/32896703?v=4" alt="Walden"></a></div>
+        <span>2017-09-13</span>
+        <h2>vue组件间通讯</h2>
+        <div class="tags"><i class="fa fa-tag"></i><a class="tag-none-link" href="/tags/vue-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">vue,学习笔记</a></div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+<div id="lx-main-content">
+  <div class="lx-post">
+    <div class="lx-entry padding">
+      <div>
+        <p>本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。</p>
+<p>其实能够实现组件间通讯的形式有很多，这里列出常用的几种。</p>
+<h3 id="方式一：props"><a href="#方式一：props" class="headerlink" title="方式一：props"></a>方式一：props</h3><p>父组件通过一下方式向子组件传递数据。</p>
+<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>子组件通过 <code>props</code> 接受父组件的数据。</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;script&gt;
+export default &#123;
+  &#x2F;&#x2F; ...
+  props: &#123;
+    count: &#123;
+      type: Number,
+      required: true,
+    &#125;,
+  &#125;,
+  &#x2F;&#x2F; ...
+&#125;;
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>props 方式是由 vue 的响应式机制驱动的，而其响应式机制的实现是依靠原生 javascript api <code>Object.defineProperty</code> 重写数据模型的属性的 getter 和 setter 方法实现的，其中的原理于代理模式相似，这里不做详细的研究。</p>
+<h3 id="方式二：组件事件监听与-emit"><a href="#方式二：组件事件监听与-emit" class="headerlink" title="方式二：组件事件监听与$emit"></a>方式二：组件事件监听与$emit</h3><p>父组件通过<code>@</code>符或者<code>v-on:</code>来监听子组件的事件。</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
+  &lt;ChildComp @cry&#x3D;&quot;onChildCry&quot; &#x2F;&gt;
+&lt;&#x2F;template&gt;
+
+&lt;script&gt;
+export default &#123;
+  &#x2F;&#x2F; ...
+  methods: &#123;
+    onChildCry() &#123;
+      &#x2F;&#x2F; do something
+    &#125;,
+  &#125;,
+&#125;;
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>子组件通过 <code>$emit</code> api 把指定事件抛给父组件。</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;script&gt;
+export default &#123;
+  mounted() &#123;
+    &#x2F;&#x2F; when the child is hungry
+    if (isHungry) &#123;
+      this.$emit(&quot;cry&quot;);
+    &#125;
+  &#125;,
+&#125;;
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这种方式的表现形式与 dom0 级事件监听很类似，但是其实质却有着绝对的差别。这里简单地分析一下 vue 的组件事件监听的原理。</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 假设这是父组件实例</span>
+<span class="token keyword">const</span> parentCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  <span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// do something</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 假设这是子组件的实例</span>
+<span class="token keyword">const</span> childCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  listeners<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 父组件添加子组件监听事件时，其实是在子组件中新增一个事件和处理器的映射</span>
+    <span class="token comment">// !注意⚠️，这里只是粗浅的原理分析，并不是vue的真实情况</span>
+    <span class="token comment">// !vue会保护handler的执行上下文</span>
+    <span class="token function-variable function">cry</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> parentCompIns<span class="token punctuation">.</span><span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 抛出事件</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$emit</span><span class="token punctuation">(</span><span class="token string">"cry"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">$emit</span><span class="token punctuation">(</span><span class="token parameter">eventName</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 检索事件，如果注册了则执行，否则忽略</span>
+    <span class="token keyword">const</span> handler <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>listeners<span class="token punctuation">[</span>eventName<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">typeof</span> handler <span class="token operator">===</span> <span class="token string">"function"</span> <span class="token operator">&amp;&amp;</span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="方式三：vuex-状态管理器"><a href="#方式三：vuex-状态管理器" class="headerlink" title="方式三：vuex 状态管理器"></a>方式三：vuex 状态管理器</h3><p>状态管理器 vuex 也可以实现组件间的通讯，而且这是一个非常好的代码解藕的途径。vuex 的实现原理应该是围绕着两个核心概念，分别是数据中心和通知。这里不会详细讨论 vuex 的使用，后面会单独开一篇文章来记录。</p>
+<h3 id="方式四：-refs-调用组件实例方法"><a href="#方式四：-refs-调用组件实例方法" class="headerlink" title="方式四：$refs 调用组件实例方法"></a>方式四：$refs 调用组件实例方法</h3><h3 id="方式五：事件驿站-EventBus"><a href="#方式五：事件驿站-EventBus" class="headerlink" title="方式五：事件驿站 EventBus"></a>方式五：事件驿站 EventBus</h3><h3 id="方式六：全局数据"><a href="#方式六：全局数据" class="headerlink" title="方式六：全局数据"></a>方式六：全局数据</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="lx-navigation">
+	<div class="lx-cover next lx-cover-sm" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/footer-l.min.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2021/04/16/%E7%AB%8B%E5%8D%9A%E4%B8%BA%E8%AF%81%EF%BC%8C%E4%B8%A4%E4%B8%AA%E6%9C%88%E5%95%83%E5%AE%8C%E2%80%9C%E5%A4%A7%E7%8A%80%E7%89%9B%E2%80%9D/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Next</span>
+						<h3>温故知新，两个...</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+        <div class="lx-cover prev lx-cover-sm" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/footer-r.min.jpeg)">
+		<div class="overlay"></div>
+		<a class="copy" href="/2017/09/13/v-show-%E4%B8%8E-v-if%E7%9A%84%E5%8C%BA%E5%88%AB/">
+			<div class="display-t">
+				<div class="display-tc">
+					<div>
+						<span>Prev</span>
+						<h3>v-show ...</h3>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+
+</div>
+
+<footer>
+  <div>
+  Copyright &copy; 2022.<a href="/">Walden's 自画像</a><br>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme <a href="https://lx.js.org" target="_blank">Lx</a><br>
+  </div>
+</footer>
+
+</div>
+
+<button class="hamburger hamburger--arrow-r" type="button" title="menu">
+    <div class="hamburger-box">
+      <div class="hamburger-inner"></div>
+    </div>
+</button>
+<div class="menu visibility">
+  <div class="menu-head">
+    <span class="layer">
+      <div class="col">
+        <div class="row for-pic">
+          <div class="profile-pic">
+            <a href="/"><img src="https://avatars.githubusercontent.com/u/32896703?v=4" alt="Walden"/></a>
+          </div>
+        </div>
+        <div class="row for-name">
+          <p>Walden</p>
+          <span class="tagline">自画像</span>
+        </div>
+      </div>
+    </span>
+  </div>
+  <nav class="menu-container">
+  <ul class="menu-items">
+    <li><a href="/"><i class="fa fa-home fa-fw"></i>Home</a></li>
+    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+    <li class="has-sub"><span class="dropdown-heading">
+      <i class="fa fa-th-list fa-fw"></i>Categories</span>
+        <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></li></ul>
+    </li>
+    <li class="has-sub"><span class="dropdown-heading">
+      <i class="fa fa-bookmark fa-fw"></i>Pages</span>
+        <ul>
+          <li><a href="/about/">About</a></li>
+        </ul>
+    </li>
+    <li class="has-sub"><span class="dropdown-heading">
+      <i class="fa fa-link fa-fw"></i>Friends</span>
+        <ul>
+          <li> <a href="https://lx.js.org" target="_blank">Theme-Lx</a></li>
+        </ul>
+    </li>
+  </ul>
+  </nav>
+</div>
+
+<div class="gototop js-top">
+  <a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/js/jquery.easing.min.js"></script>
+<script>
+(function () {
+	"use strict";
+	var goToTop = function() {
+		$(".js-gotop").on("click", function(event){
+			event.preventDefault();
+			$("html, body").animate({
+				scrollTop: $("html").offset().top
+			}, 500, "easeInOutExpo");
+			return false;
+		});
+		$(window).scroll(function(){
+			var $win = $(window);
+			if ($win.scrollTop() > 200) {
+				$(".js-top").addClass("active");
+			} else {
+				$(".js-top").removeClass("active");
+			}
+		});
+	};
+	$(function(){
+		goToTop();
+	});
+}());
+</script>
+<script src="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/js/local.search.min.js"></script>
+
+</body>
+</html>

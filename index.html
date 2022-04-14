@@ -1012,6 +1012,90 @@ console<span class="token punctuation">.</span><span class="token function">log<
   </div>
   <div class="lx-entry padding">
     <div>
+      <h2 class="title"><a href="/2017/09/13/vue%E7%BB%84%E4%BB%B6%E9%97%B4%E9%80%9A%E8%AE%AF/">vue组件间通讯</a></h2>
+      <span class="lx-post-detail"><i class="fa fa-calendar-o"></i> 2017-09-13</span>
+      <p><p>本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。</p>
+<p>其实能够实现组件间通讯的形式有很多，这里列出常用的几种。</p>
+<h3 id="方式一：props"><a href="#方式一：props" class="headerlink" title="方式一：props"></a>方式一：props</h3><p>父组件通过一下方式向子组件传递数据。</p>
+<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>子组件通过 <code>props</code> 接受父组件的数据。</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;script&gt;
+export default &#123;
+  &#x2F;&#x2F; ...
+  props: &#123;
+    count: &#123;
+      type: Number,
+      required: true,
+    &#125;,
+  &#125;,
+  &#x2F;&#x2F; ...
+&#125;;
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>props 方式是由 vue 的响应式机制驱动的，而其响应式机制的实现是依靠原生 javascript api <code>Object.defineProperty</code> 重写数据模型的属性的 getter 和 setter 方法实现的，其中的原理于代理模式相似，这里不做详细的研究。</p>
+<h3 id="方式二：组件事件监听与-emit"><a href="#方式二：组件事件监听与-emit" class="headerlink" title="方式二：组件事件监听与$emit"></a>方式二：组件事件监听与$emit</h3><p>父组件通过<code>@</code>符或者<code>v-on:</code>来监听子组件的事件。</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
+  &lt;ChildComp @cry&#x3D;&quot;onChildCry&quot; &#x2F;&gt;
+&lt;&#x2F;template&gt;
+
+&lt;script&gt;
+export default &#123;
+  &#x2F;&#x2F; ...
+  methods: &#123;
+    onChildCry() &#123;
+      &#x2F;&#x2F; do something
+    &#125;,
+  &#125;,
+&#125;;
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>子组件通过 <code>$emit</code> api 把指定事件抛给父组件。</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;script&gt;
+export default &#123;
+  mounted() &#123;
+    &#x2F;&#x2F; when the child is hungry
+    if (isHungry) &#123;
+      this.$emit(&quot;cry&quot;);
+    &#125;
+  &#125;,
+&#125;;
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这种方式的表现形式与 dom0 级事件监听很类似，但是其实质却有着绝对的差别。这里简单地分析一下 vue 的组件事件监听的原理。</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 假设这是父组件实例</span>
+<span class="token keyword">const</span> parentCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  <span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// do something</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 假设这是子组件的实例</span>
+<span class="token keyword">const</span> childCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  listeners<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 父组件添加子组件监听事件时，其实是在子组件中新增一个事件和处理器的映射</span>
+    <span class="token comment">// !注意⚠️，这里只是粗浅的原理分析，并不是vue的真实情况</span>
+    <span class="token comment">// !vue会保护handler的执行上下文</span>
+    <span class="token function-variable function">cry</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> parentCompIns<span class="token punctuation">.</span><span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 抛出事件</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$emit</span><span class="token punctuation">(</span><span class="token string">"cry"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">$emit</span><span class="token punctuation">(</span><span class="token parameter">eventName</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 检索事件，如果注册了则执行，否则忽略</span>
+    <span class="token keyword">const</span> handler <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>listeners<span class="token punctuation">[</span>eventName<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">typeof</span> handler <span class="token operator">===</span> <span class="token string">"function"</span> <span class="token operator">&amp;&amp;</span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="方式三：vuex-状态管理器"><a href="#方式三：vuex-状态管理器" class="headerlink" title="方式三：vuex 状态管理器"></a>方式三：vuex 状态管理器</h3><p>状态管理器 vuex 也可以实现组件间的通讯，而且这是一个非常好的代码解藕的途径。vuex 的实现原理应该是围绕着两个核心概念，分别是数据中心和通知。这里不会详细讨论 vuex 的使用，后面会单独开一篇文章来记录。</p>
+<h3 id="方式四：-refs-调用组件实例方法"><a href="#方式四：-refs-调用组件实例方法" class="headerlink" title="方式四：$refs 调用组件实例方法"></a>方式四：$refs 调用组件实例方法</h3><h3 id="方式五：事件驿站-EventBus"><a href="#方式五：事件驿站-EventBus" class="headerlink" title="方式五：事件驿站 EventBus"></a>方式五：事件驿站 EventBus</h3><h3 id="方式六：全局数据"><a href="#方式六：全局数据" class="headerlink" title="方式六：全局数据"></a>方式六：全局数据</h3></p>
+      <div class="post-button"><a class="btn" href="/2017/09/13/vue%E7%BB%84%E4%BB%B6%E9%97%B4%E9%80%9A%E8%AE%AF/" rel="noopener"><i class="fa fa-angle-double-right fa-fw"></i>Read More</a></div>
+    </div>
+  </div>
+  <div class="lx-entry padding">
+    <div>
       <h2 class="title"><a href="/2017/09/13/v-show-%E4%B8%8E-v-if%E7%9A%84%E5%8C%BA%E5%88%AB/">v-show 与 v-if的区别</a></h2>
       <span class="lx-post-detail"><i class="fa fa-calendar-o"></i> 2017-09-13</span>
       <p><p>在 vue 中，<code>v-show</code>和<code>v-if</code>都是用来控制元素或组件的显示和隐藏，但是它们的显示和隐藏的实现机制有着根本性的差别。</p>
