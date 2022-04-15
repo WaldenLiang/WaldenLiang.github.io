@@ -1,10 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>javascript中可缺省的分号</title>
+    <url>/2021/04/17/javascript%E4%B8%AD%E5%8F%AF%E7%BC%BA%E7%9C%81%E7%9A%84%E5%88%86%E5%8F%B7/</url>
+    <content><![CDATA[<p>写 javascript 的都知道，代码中的分号(;)很多时候都可以省略不写的，原因是 javascript 的解析器能够自动的分隔语句。</p>
+<p>例如，如果两条语句分别在两行，通常分号是可以被省略的，或者一条语句的接下来是右花括号 }，那么这里的分号也可以省略的。但是有些情况下的分号是必须的，比如如下代码：</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript">a <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span> <span class="token comment">// 这里的分号可以省略</span>
+b <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span> <span class="token comment">// 这里的分号可以省略</span>
+
+c <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+d <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span> <span class="token comment">// 这里的第一个分号是必须的</span></code></pre>
+
+<p>注意，javascript 中并不是每一次的换行都会被当作分号，而是在不隐式的添加分号就无法解析代码的时候，才会加上分号，否则不会自动添加分号。例如，一下代码：</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> a<span class="token punctuation">;</span>
+a <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<p>javascript 解析器会将代码理解为：</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> a<span class="token punctuation">;</span>
+a <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<p>javascript 解析器在没有显性的分号时，会尽量的解析更长的代码，直至无法正确解析时，才会隐形的添加分号。</p>
+<p>因为如上原因，那么就会造成以下情况：</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> y <span class="token operator">=</span> x <span class="token operator">+</span> <span class="token function">f</span><span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<p>程序员的本意可能时，这里是两个语句，但是 javascript 会理解为</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> y <span class="token operator">=</span> x <span class="token operator">+</span> <span class="token function">f</span><span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 解析器会尽可能的理解更长的语句</span></code></pre>
+
+<p>以上的这种情况，程序员的真实意图与 javascript 解析器解析出来的结果完全不一致，这种情况的问题，若果不注意，是很难发现的。</p>
+<p>所以，有些情况下就会出现防御性的分号，还用上一个例子演示。</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> y <span class="token operator">=</span> x <span class="token operator">+</span> f<span class="token punctuation">;</span>
+<span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 这里的分号是一个防御性的分号，通常会出现在()或[]开头的语句中，比如;[1,2,3].join(',')</span></code></pre>
+
+<p>上面说到，javascript 会尽可能的理解更长的语句，但是涉及到 return，throw，yield，break 和 continue 语句时，则不然，若以上语句后面没有显性的分号且跟着换行符，解析器则会自动分隔语句，例如：</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">return</span><span class="token punctuation">;</span>
+<span class="token boolean">true</span><span class="token punctuation">;</span></code></pre>
+
+<p>javascript 理解为</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">return</span><span class="token punctuation">;</span>
+<span class="token boolean">true</span><span class="token punctuation">;</span></code></pre>
+
+<p>这意味着，一定不能在 return，break 或 continue 等关键字后面的表达式之间加入换行符。</p>
+]]></content>
+      <categories>
+        <category>理性</category>
+      </categories>
+      <tags>
+        <tag>javascript,大犀牛学习日记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>javascript中字符串的大小比较</title>
     <url>/2021/04/17/javascript%E4%B8%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%A4%A7%E5%B0%8F%E6%AF%94%E8%BE%83/</url>
-    <content><![CDATA[<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token string">"two"</span> <span class="token operator">></span> <span class="token string">"three"</span> <span class="token comment">// => true 按照ASCII码表进行比较，从小到大顺序：0-9A-Za-z</span>
-<span class="token string">"a"</span> <span class="token operator">></span> <span class="token string">"99999999999999999"</span> <span class="token comment">// => true 不论长度</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+    <content><![CDATA[<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token string">"two"</span> <span class="token operator">></span> <span class="token string">"three"</span> <span class="token comment">// => true 按照ASCII码表进行比较，从小到大顺序：0-9A-Za-z</span>
+<span class="token string">"a"</span> <span class="token operator">></span> <span class="token string">"99999999999999999"</span> <span class="token comment">// => true 不论长度</span></code></pre>
 
 <p>无论长度, 从左侧开始比较。</p>
 ]]></content>
@@ -16,11 +66,529 @@
       </tags>
   </entry>
   <entry>
+    <title>v-show 与 v-if的区别</title>
+    <url>/2017/09/13/v-show-%E4%B8%8E-v-if%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>在 vue 中，<code>v-show</code>和<code>v-if</code>都是用来控制元素或组件的显示和隐藏，但是它们的显示和隐藏的实现机制有着根本性的差别。</p>
+<p><code>v-show</code>是通过控制 dom 元素的样式<code>display: none</code>的动态添加和去除来实现元素的显示和隐藏的。</p>
+<p>而<code>v-if</code>则是通过操作 dom 元素的创建，插入和移除来实现的。一般情况下通过<code>v-if</code>来控制组件的显示和隐藏会进行组件的创建，挂载和销毁，也就是说，<code>v-if</code>的变化会触发组件的生命周期钩子，但是如果通过<code>keep-alive</code>包裹起来，则不会触发创建，挂载和销毁，但是会触发激活钩子<code>activated</code>，即便如此，<code>v-if</code>的元素或组件的显示和隐藏都是通过 dom 操作实现的。</p>
+<p>如果明白以上的原理，那么就可以分析它们的优缺点和适用场景。</p>
+<p><code>v-show</code>的优点就是在切换显示隐藏这个动作上效率高，性能好，切占用资源少，因为 dom 元素一直都存在，只是简单修改样式而已。</p>
+<p>但是在首次页面渲染的时候，针对那些内容很多的元素，或者很复杂的组件，它们不要求立刻显示，但是仅通过<code>v-show</code>来控制隐藏的话，它们在页面渲染时还是会挂载在页面上的，这就造成了不必要的资源浪费，这也是<code>v-show</code>的一个明显缺点。</p>
+<p><code>v-show</code>的优缺点都是围绕着“dom 元素会存在于文档流中”这一个实际去分析的。针对一些 SSR 的项目，如果要求用户登录之后才能看到某些敏感内容，比如一些资源的下载链接，这个时候用<code>v-show</code>就起不到资源保护的作用，这又是<code>v-show</code>的另外一个缺点。</p>
+<p>而以上两个关于<code>v-show</code>的缺点，通过使用<code>v-if</code>都能非常好的得到解决。我认为<code>v-if</code>的一个最重要的优点就是它能够实现异步组件的功能，这能够非常好的防止资源浪费。</p>
+<p>但是，<code>v-if</code>的显示和隐藏切换的性能是比不过<code>v-show</code>的，即便通过<code>keep-alive</code>来缓存组件状态和数据。</p>
+<p>根据以上的分析可知它们的适用场景。</p>
+<p><code>v-show</code>的适用场景：</p>
+<ul>
+<li>需要频繁切换显示和隐藏的元素或组件；</li>
+<li>规模比较小的组件或者元素的显示隐藏控制；</li>
+</ul>
+<p><code>v-if</code>的适用场景：</p>
+<ul>
+<li>无需频繁切换显示隐藏的元素或组件；</li>
+<li>异步组件；</li>
+<li>资源保护；</li>
+<li>每次显示和隐藏都有触发生命周期钩子的需求；</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>vue,学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>vue组件生命周期的表现研究</title>
+    <url>/2017/09/10/vue%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</url>
+    <content><![CDATA[<p>要了解透彻 vue 组件生命周期中每一个阶段做了什么工作，这不是一件简单的事情，这其中可能需要了解 vue 的底层原理，才能明白每一个阶段做了什么工作和为什么需要做这些工作。暂时还没有到研究 vue 底层原理的地步，所以本篇文章仅仅是分析组件或嵌套组件的一些情况。</p>
+<p>要了解生命周期就肯定得知道生命周期钩子函数。所谓钩子函数其实际就是一个函数，而“钩子”的表意是该函数与某一个事物或者动作挂钩，当这个事物或动作发生指定的情况，与之连接的“钩子”就会被牵动，从而触发函数的执行。这里的表现与 dom 元素的事件监听非常相似，事实上无论是 dom 元素事件监听还是 vue 生命周期钩子都是一种订阅发布的设计模式。</p>
+<p>这里就不展开订阅发布设计模式的说明了，我们只需要知道，vue 生命周期钩子函数会在生命周期的某一刻被 vue 内部逻辑执行。</p>
+<p>这里实现一个超超超简单的例子。</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 定义一个组件实例</span>
+<span class="token keyword">const</span> vueComp <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  <span class="token function">created</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"vueComp is created."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"vueComp is mounted"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+<span class="token function">renderComp</span><span class="token punctuation">(</span>vueComp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 假设这是一个vue的组件创建逻辑</span>
+<span class="token keyword">function</span> <span class="token function">renderComp</span><span class="token punctuation">(</span><span class="token parameter">compConfig</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// created前准备</span>
+  <span class="token comment">// 完成创建后，手动拉一下钩子</span>
+  compConfig<span class="token punctuation">.</span><span class="token function">created</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token comment">// mounted前准备</span>
+  <span class="token comment">// 完成挂载后，手动拉一下钩子</span>
+  compConfig<span class="token punctuation">.</span><span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>以上就是最根本的钩子函数的执行过程，当然 vue 的组件创建和挂载渲染流程肯定会复杂很多，但是道理应该是相似的。</p>
+<p>那么 vue 有哪些生命周期钩子呢？</p>
+<ul>
+<li>beforeCreate</li>
+<li>created</li>
+<li>beforeMount</li>
+<li>mounted</li>
+<li>beforeUpdate</li>
+<li>updated</li>
+<li>beforeDestroy</li>
+<li>destroyed</li>
+</ul>
+<p>另外还有两个虽然不在官方的生命周期图中，但是我认为它们也是生命周期的一环，它们是：</p>
+<ul>
+<li>activated</li>
+<li>deactivated</li>
+</ul>
+<p>注意，<code>activated</code> 和 <code>deactivated</code> 只有在 <code>keep-alive</code> 包裹下的组件中才会被触发，否则不会被触发，它们有点类似<code>onShow</code> 和 <code>onHide</code>的意思。因为 <code>keep-alive</code> 包裹下的组件是会被缓存起来的，创建和挂载的相关钩子只会被触发一次，而 <code>activated</code> 和 <code>deactivated</code> 分别在每一次的显示和隐藏的时候都会被触发，所以某些初始化和复位的操作可以在这两个钩子函数中处理。</p>
+<p>在一个完整的生命周期中组件的钩子函数的执行顺序是这样的：</p>
+<pre class="language-none"><code class="language-none">                                                    deactivated
+                                                     |       |
+beforeCreate -&gt; created -&gt; beforeMount -&gt; mounted -&gt; activated --------&gt; beforeDestroy -&gt; destroyed
+                                                                |     |
+                                                      beforeUpdate -&gt; updated</code></pre>
+
+<p>目前阶段，值得研究的应该是更新的钩子函数。在 vue 的机制中，<code>beforeUpdate</code> 和 <code>updated</code> 只有在组件挂载完成后，即<code>mounted</code>被执行后，该组件的 data 数据发生变化并且驱动视图变化才会触发这两个钩子函数，如果仅仅是 data 数据发生变化，但是不影响视图，那么这两个钩子是不会被触发的。</p>
+<p>或者直接通过 dom 操作来改变视图，这也不会触发更新的钩子函数，因为这种行为是脱离了 vue 的生命周期控制的。</p>
+<p>另外，还有一点很重要，那就是组件的更新和渲染是异步的。关于异步又会牵扯出一大堆关于事件循环和执行栈的知识，这里暂不研究，实际上我还不是很了解。我们暂时只理解为，vue 会把所有同步操作执行完成后，关于 data 数据的修改会被整合成一次操作，最后再去更新视图，然后触发更新的钩子函数。</p>
+<p>简单的写一个例子：</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  count<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
+data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
+data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
+
+<span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>count<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 打印结果：5</span>
+  <span class="token comment">// render view and exec updatedHook function</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
+data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span></code></pre>
+
+<p>以上例子可以很初步的了解到异步渲染的原理。目前关于 vue 组件的更新钩子函数我们暂时掌握到这里，等后续深入 vue 原理的时候再补充内容。</p>
+<p>而其他的钩子函数，我们主要留意一下几点应该没什么问题了。</p>
+<ol>
+<li>在 <code>created</code> 或者 <code>beforeCreate</code> 中做一些早期的初始化工作；</li>
+<li>在 <code>mounted</code> 钩子函数中可以做 dom 操作；</li>
+<li>在 <code>destroyed</code> 或者 <code>beforeDestroy</code> 中释放资源；</li>
+<li>在 <code>beforeCreate</code> 中无法读取 <code>this</code> 对象；</li>
+</ol>
+<p>分析完一个组件的生命周期，我们来分析一下组件嵌套的情况下，父子组件的生命周期钩子函数的执行顺序。我们先写一个例子。</p>
+<p><code>App.vue</code></p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>app<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>toggleChildCompVisible<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Toggle<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>changeCount<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Change count<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>changeCount2<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Change count2<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>changeCount3<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Change count3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>changeCountTroughRefMethod<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Change count4<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ParentComp</span>
+      <span class="token attr-name">ref</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>parentComp<span class="token punctuation">"</span></span>
+      <span class="token attr-name">v-if</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>isShow<span class="token punctuation">"</span></span>
+      <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span>
+      <span class="token attr-name">:count2</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count2<span class="token punctuation">"</span></span>
+      <span class="token attr-name">:count3</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count3<span class="token punctuation">"</span></span>
+    <span class="token punctuation">/></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">import</span> ParentComp <span class="token keyword">from</span> <span class="token string">"./components/ParentComp"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  name<span class="token operator">:</span> <span class="token string">"App"</span><span class="token punctuation">,</span>
+  components<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    ParentComp<span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">return</span> <span class="token punctuation">&#123;</span>
+      isShow<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+      count<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+      count2<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+      count3<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+      count4<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  methods<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">toggleChildCompVisible</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>isShow <span class="token operator">=</span> <span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>isShow<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token function">changeCount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token function">changeCount2</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count2<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token function">changeCount3</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count3<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token function">changeCountTroughRefMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count4<span class="token operator">++</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>$refs<span class="token punctuation">.</span>parentComp<span class="token punctuation">.</span><span class="token function">changeCount</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>count4<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
+
+<p><code>/components/ParentComp.vue</code></p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">></span></span>
+    ParentComp
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">ref</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>childComp<span class="token punctuation">"</span></span> <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span> <span class="token attr-name">:count2</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count2<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">import</span> ChildComp <span class="token keyword">from</span> <span class="token string">"./ChildComp"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  name<span class="token operator">:</span> <span class="token string">"ParentComp"</span><span class="token punctuation">,</span>
+  components<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    ChildComp<span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  props<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    count<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    count2<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    count3<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeCreate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp beforeCreate"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">created</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp created"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeMount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp beforeMount"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp mounted"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeUpdate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp beforeUpdate"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">updated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp updated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">activated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp activated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">deactivated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp deactivated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeDestroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp beforeDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">destroyed</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp destroyed"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  methods<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">changeCount</span><span class="token punctuation">(</span><span class="token parameter">num</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>$refs<span class="token punctuation">.</span>childComp<span class="token punctuation">.</span><span class="token function">changeCount</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
+
+<p><code>/components/ChildComp.vue</code></p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">></span></span>ChildComp&#123;&#123; count &#125;&#125; &#123;&#123; count4 &#125;&#125;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  name<span class="token operator">:</span> <span class="token string">"ChildComp"</span><span class="token punctuation">,</span>
+  props<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    count<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    count2<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">return</span> <span class="token punctuation">&#123;</span>
+      count4<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeCreate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp beforeCreate"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">created</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp created"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeMount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp beforeMount"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp mounted"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeUpdate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp beforeUpdate"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">updated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp updated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">activated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp activated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">deactivated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp deactivated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeDestroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp beforeDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">destroyed</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp destroyed"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  methods<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">changeCount</span><span class="token punctuation">(</span><span class="token parameter">num</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count4 <span class="token operator">=</span> num<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
+
+<p>页面初次渲染的时候能够获得以下日志：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ParentComp beforeCreate
+ParentComp created
+ParentComp beforeMount
+ChildComp beforeCreate
+ChildComp created
+ChildComp beforeMount
+ChildComp mounted
+ParentComp mounted</code></pre>
+
+<p>点击 Toggle 按钮后隐藏组件后，能够获得以下日志：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ParentComp beforeDestroy
+ChildComp beforeDestroy
+ChildComp destroyed
+ParentComp destroyed</code></pre>
+
+<p>如果考虑 <code>keep-alive</code> 的话，ChildComp activated 和 ParentComp activated 会依次在 ParentComp mounted 后执行。而隐藏组件的话，并不会销毁组件，所以日志如下：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ChildComp deactivated
+ParentComp deactivated</code></pre>
+
+<p>然后验证了关于更新钩子的一些情况，分别依次点击按钮 Change count，Change count2，Change count3，Change count4，能够获得已下日志：</p>
+<p>Change count：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ParentComp beforeUpdate
+ChildComp beforeUpdate
+ChildComp updated
+ParentComp updated</code></pre>
+
+<p>Change count2：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ParentComp beforeUpdate
+ParentComp updated</code></pre>
+
+<p>点击 Change count3 没有任何日志产生。</p>
+<p>Change count4：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ChildComp beforeUpdate
+ChildComp updated</code></pre>
+
+<p>分析可以得出以下结论：</p>
+<ul>
+<li>按钮 123 三个测试可以分析出，父组件的 data 和 props 发生变化后，不一定就会触发本组件的更新，按照上文的更新钩子函数的分析，需要引起视图变化才会触发更新钩子函数，还有一种情况就是，把变化的属性传入到子组件中，即便子组件并没有引起视图变化，但是在父组件的角度来看，子组件是视图的一部分，而此时子组件的属性确实发生了变化，所以父组件依旧会触发更新的钩子函数，否则其他情况不会触发更新钩子；</li>
+<li>按钮 4 得出的结论，子组件的更新并不一定会触发父组件的更新钩子函数，还是那个道理，模型+视图变化才会触发更新钩子；</li>
+</ul>
+<p>以上就是本篇文章关于 vue 组件的生命周期的所有研究。关于“每个生命周期 vue 内部做了什么工作”，这需要深入 vue 的源码研究，往后会另开一文来记录。此外还有 mixin 的情况分析，这也会新起一篇文章来记录。</p>
+]]></content>
+      <tags>
+        <tag>vue,学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>vue组件间通讯</title>
+    <url>/2017/09/13/vue%E7%BB%84%E4%BB%B6%E9%97%B4%E9%80%9A%E8%AE%AF/</url>
+    <content><![CDATA[<p>本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。</p>
+<p>其实能够实现组件间通讯的形式有很多，这里列出常用的几种。</p>
+<h3 id="方式一：props"><a href="#方式一：props" class="headerlink" title="方式一：props"></a>方式一：props</h3><p>父组件通过以下方式向子组件传递数据。</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span></code></pre>
+
+<p>子组件通过 <code>props</code> 接受父组件的数据。</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  props<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    count<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+      required<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token comment">// ...</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
+
+<p>props 方式是由 vue 的响应式机制驱动的，而其响应式机制的实现是依靠原生 javascript api <code>Object.defineProperty</code> 代理数据模型的属性的 getter 和 setter 方法实现的，其中的原理与代理模式相似，这里不做详细的研究。</p>
+<h3 id="方式二：组件事件监听与-emit"><a href="#方式二：组件事件监听与-emit" class="headerlink" title="方式二：组件事件监听与$emit"></a>方式二：组件事件监听与$emit</h3><p>父组件通过<code>@</code>符或者<code>v-on:</code>来监听子组件的事件。</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">@cry</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>onChildCry<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  methods<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token comment">// do something</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
+
+<p>子组件通过 <code>$emit</code> api 把指定事件抛给父组件。</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// when the child is hungry</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>isHungry<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$emit</span><span class="token punctuation">(</span><span class="token string">"cry"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
+
+<p>这种方式的表现形式与 dom0 级事件监听很类似，但是其实质是不一样的。这里简单地分析一下 vue 的组件事件监听的原理。</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 假设这是父组件实例</span>
+<span class="token keyword">const</span> parentCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  <span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// do something</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 假设这是子组件的实例</span>
+<span class="token keyword">const</span> childCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  listeners<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 父组件添加子组件监听事件时，其实是在子组件中新增一个事件和处理器的映射</span>
+    <span class="token comment">// !注意⚠️，这里只是粗浅的原理分析，并不是vue的真实情况</span>
+    <span class="token comment">// !vue会保护handler的执行上下文</span>
+    <span class="token function-variable function">cry</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> parentCompIns<span class="token punctuation">.</span><span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 抛出事件</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$emit</span><span class="token punctuation">(</span><span class="token string">"cry"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">$emit</span><span class="token punctuation">(</span><span class="token parameter">eventName</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 检索事件，如果注册了则执行，否则忽略</span>
+    <span class="token keyword">const</span> handler <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>listeners<span class="token punctuation">[</span>eventName<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">typeof</span> handler <span class="token operator">===</span> <span class="token string">"function"</span> <span class="token operator">&amp;&amp;</span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre>
+
+<h3 id="方式三：vuex-状态管理器"><a href="#方式三：vuex-状态管理器" class="headerlink" title="方式三：vuex 状态管理器"></a>方式三：vuex 状态管理器</h3><p>状态管理器 vuex 也可以实现组件间的通讯，而且这是一个非常好的代码解藕的途径。vuex 的实现原理应该是围绕着两个核心概念，分别是数据中心和通知。这里不会详细讨论 vuex 的使用，后面会单独开一篇文章来记录。</p>
+<h3 id="方式四：-refs-调用组件实例方法"><a href="#方式四：-refs-调用组件实例方法" class="headerlink" title="方式四：$refs 调用组件实例方法"></a>方式四：$refs 调用组件实例方法</h3><p>vue 中可以通过 $refs 获取一个组件的实例，然后可以通过实例调用实例方法实现组件间的通讯。</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">ref</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>childComp<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>$refs<span class="token punctuation">.</span>childComp<span class="token punctuation">.</span><span class="token function">doSomething</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
+
+<h3 id="方式五：事件总线-EventBus"><a href="#方式五：事件总线-EventBus" class="headerlink" title="方式五：事件总线 EventBus"></a>方式五：事件总线 EventBus</h3><p>事件总线是一种解决两个“东西”之间的通讯的方案，这不是 vue 独有的。我不知道其他语言或者平台的事件总线会有什么实现的差别，而 vue 中 EventBus 可以通过订阅发布的设计模式进行实现。</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  <span class="token keyword">const</span> _listeners <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$on</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">eventName<span class="token punctuation">,</span> handler</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// validate 做入参的判断，eventName是字符串，handler为function</span>
+    <span class="token comment">// 生成监听器的id，可用于移除操作</span>
+    <span class="token keyword">const</span> id <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 注册事件</span>
+    _listeners<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+      id<span class="token punctuation">,</span>
+      eventName<span class="token punctuation">,</span>
+      <span class="token comment">// 维护handler的执行上下文</span>
+      <span class="token function-variable function">handler</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter"><span class="token operator">...</span>args</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">return</span> id<span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$emit</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">eventName<span class="token punctuation">,</span> <span class="token operator">...</span>args</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// do validating</span>
+    _listeners
+      <span class="token punctuation">.</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">item</span><span class="token punctuation">)</span> <span class="token operator">=></span> item<span class="token punctuation">.</span>eventName <span class="token operator">===</span> eventName<span class="token punctuation">)</span>
+      <span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter"><span class="token punctuation">&#123;</span> handler <span class="token punctuation">&#125;</span></span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$off</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">id</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 移除操作</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// ...</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>以上便是一个基本的事件总线的实现，这个 EventBus 就是一个事件和消息的处理网关，通过网关实例可以订阅指定的事件和发布指定事件消息，EventBus 负责登记和分发消息，这便是订阅发布的设计模式。所以我也称 EventBus 为事件驿站（只是个人的看法）。</p>
+<p>至于如何使用 EventBus。我们可以先实例一个 EventBus，把它挂载在全局 window 对象下，或者挂载在 Vue 的原型上都是可以的，又或者通过模块导出一个实例。</p>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token class-name">Vue</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span>eventBus <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<p>组件可以通过如此使用。注意，使用 EventBus 时，需要注意在组件销毁的时候一定要卸载监听器，否则有可能造成内存泄漏。</p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token comment">&lt;!-- 组件一，省略内容 --></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 缓存监听器id</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>listener <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>eventBus<span class="token punctuation">.</span><span class="token function">$on</span><span class="token punctuation">(</span><span class="token string">"customEvent"</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token comment">// do something</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">destroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 记得卸载监听器</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>eventBus<span class="token punctuation">.</span><span class="token function">$off</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>listener<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
+
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token comment">&lt;!-- 组件二，省略内容 --></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 发布消息</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>eventBus<span class="token punctuation">.</span><span class="token function">$emit</span><span class="token punctuation">(</span><span class="token string">"customEvent"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
+
+<p>EventBus 也是一种代码解藕的途径，但是这种方式一般在实际开发的项目中不太推荐采用，不推荐的原因有：</p>
+<ul>
+<li>可追溯性和可读性差；</li>
+<li>需要卸载监听器，否则一直占用资源，严重还会造成内存泄漏；</li>
+</ul>
+<p>所以，EventBus 应该被视作一种保留方案，通常那些不好通过状态管理器 vuex 实现，或者组件间跨度太大的情况下才考虑使用 EventBus。</p>
+<h3 id="方式六：全局数据"><a href="#方式六：全局数据" class="headerlink" title="方式六：全局数据"></a>方式六：全局数据</h3><p>其实这里说的全局数据的方式在上述的方法中也有体现，比如 vuex 或者事件总线都有体现全局数据，只是后两者会更复杂而且具备一定的通知机制。而这里说到的全局数据更简单粗暴一点，我们可以把一个对象挂载在全局 window 下，或者挂载在 Vue 的原型上，又或者通过模块导出，然后各个组件就可以访问到这个对象下的数据了。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>好了，以上便是关于组件间通讯方式的研究结果。</p>
+]]></content>
+      <tags>
+        <tag>vue,学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>手撸 Promise 的思路分享</title>
     <url>/2022/04/07/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0Promise/</url>
     <content><![CDATA[<p>前段时间在几个大牛作者的微信公众号上都看到了手撸 Promise 的文章，当时就觉得挺有意思，想自己也手撸一遍顺便检验一下基础，所以我当时没有看大佬们的代码实现，怕产生潜意识。正好这段时间比较空闲，于是撸了两个版本。第一版（v1）是第一次跑通用例的版本，很粗糙；而第二版（v2）是在第一版的基础上并结合官方测试用例的测试思路优化过后的版本，是我个人比较满意的版本，它可能不是最优版本（跑完 872 条用例耗时 16s），但应该是比较直观易懂的版本。</p>
 <p>这里贴出测试结果：</p>
-<pre class="line-numbers language-none"><code class="language-none">...省略前面内容
+<pre class="language-none"><code class="language-none">...省略前面内容
    The value is &#96;1&#96; with &#96;Number.prototype&#96; modified to have a &#96;then&#96; method
      ✓ already-fulfilled
      ✓ immediately-fulfilled
@@ -30,7 +598,7 @@
      ✓ eventually-rejected
 
 
- 872 passing (16s)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+ 872 passing (16s)</code></pre>
 
 <p>本文主要想跟大家分享一下实现思路，希望能够对感兴趣但没有思路的小伙伴们有帮助。</p>
 <h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>Promise 是一种机制，形象（自以为形象）的做一个比喻，Promise 机制就好像一个导水装置。这个导水装置有几个组成部分：</p>
@@ -50,7 +618,7 @@
 <li>最先注入的水会最先被导出，导出的水不允许回收；</li>
 </ol>
 <p>上面的比喻是个人总结，仅仅是为了更好的帮助大家初步理解，但并不能覆盖到 Promise 所有的机制，所以到真正实现的时候，希望大家不要被这个比喻局限。下面我们尝试把原生的 Promise 代入到导水装置进行组成拆分。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 新建了一个`promise`，可理解为是一个导水装置</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 新建了一个`promise`，可理解为是一个导水装置</span>
 <span class="token comment">// 初始状态，出水口都是关闭的，我们用 `pending` 来表示该状态</span>
 <span class="token keyword">const</span> promise <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Promise</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">resolve<span class="token punctuation">,</span> reject</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
   <span class="token comment">// `resolve` 就是 F 出水口的拉闸 FHook</span>
@@ -116,10 +684,10 @@ promise<span class="token punctuation">.</span><span class="token function">then
     <span class="token keyword">function</span> <span class="token function">onFulfilled</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
     <span class="token keyword">function</span> <span class="token function">onRejected</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
   <span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token number">3000</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token number">3000</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 
 <h2 id="初步实现"><a href="#初步实现" class="headerlink" title="初步实现"></a>初步实现</h2><p>经过上面的分析，我们现一起简单地用代码来实现这个“导水装置”。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 定义“装置”的三个状态常量</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 定义“装置”的三个状态常量</span>
 <span class="token comment">// 所有出口关闭</span>
 <span class="token keyword">const</span> <span class="token constant">PENDING</span> <span class="token operator">=</span> <span class="token string">"pending"</span><span class="token punctuation">;</span>
 <span class="token comment">// F 出水口已打开</span>
@@ -182,12 +750,12 @@ promise<span class="token punctuation">.</span><span class="token function">then
       <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
   <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span></code></pre>
 
 <p>以上便是这个“导水装置”的大概长得样子，当然这不是 Promise 的最终的实现，这仅仅是一个“骨架”而已。要实现正真的 Promise 机制需要补充 Promise 的机制说明，我们可以阅读 <a href="https://promisesaplus.com/">Promise A+规范</a> 来补充，中文版这可以阅读这位大佬的 <a href="https://zhuanlan.zhihu.com/p/143204897">译文</a>。</p>
 <p>以上就是本人的实现思路，为了能够让对 Promise 的原理感兴趣的伙伴们能够快速找到实现思路，我大胆的给出一个“形象”的比喻，希望能够帮助到大家，而没有被误导到。</p>
 <h2 id="Promise-完整实现"><a href="#Promise-完整实现" class="headerlink" title="Promise 完整实现"></a>Promise 完整实现</h2><p>以下是本人手撸 Promise 机制的完整实现。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> <span class="token constant">PENDING</span> <span class="token operator">=</span> <span class="token string">"pending"</span><span class="token punctuation">;</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> <span class="token constant">PENDING</span> <span class="token operator">=</span> <span class="token string">"pending"</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> <span class="token constant">FULFILLED</span> <span class="token operator">=</span> <span class="token string">"fulfilled"</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> <span class="token constant">REJECTED</span> <span class="token operator">=</span> <span class="token string">"rejected"</span><span class="token punctuation">;</span>
 
@@ -306,7 +874,7 @@ promise<span class="token punctuation">.</span><span class="token function">then
       <span class="token function">resolve</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
   <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span></code></pre>
 ]]></content>
       <categories>
         <category>理性</category>
@@ -380,56 +948,6 @@ promise<span class="token punctuation">.</span><span class="token function">then
       </categories>
   </entry>
   <entry>
-    <title>javascript中可缺省的分号</title>
-    <url>/2021/04/17/javascript%E4%B8%AD%E5%8F%AF%E7%BC%BA%E7%9C%81%E7%9A%84%E5%88%86%E5%8F%B7/</url>
-    <content><![CDATA[<p>写 javascript 的都知道，代码中的分号(;)很多时候都可以省略不写的，原因是 javascript 的解析器能够自动的分隔语句。</p>
-<p>例如，如果两条语句分别在两行，通常分号是可以被省略的，或者一条语句的接下来是右花括号 }，那么这里的分号也可以省略的。但是有些情况下的分号是必须的，比如如下代码：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">a <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span> <span class="token comment">// 这里的分号可以省略</span>
-b <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span> <span class="token comment">// 这里的分号可以省略</span>
-
-c <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
-d <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span> <span class="token comment">// 这里的第一个分号是必须的</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>注意，javascript 中并不是每一次的换行都会被当作分号，而是在不隐式的添加分号就无法解析代码的时候，才会加上分号，否则不会自动添加分号。例如，一下代码：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> a<span class="token punctuation">;</span>
-a <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
-console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>javascript 解析器会将代码理解为：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> a<span class="token punctuation">;</span>
-a <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
-console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>javascript 解析器在没有显性的分号时，会尽量的解析更长的代码，直至无法正确解析时，才会隐形的添加分号。</p>
-<p>因为如上原因，那么就会造成以下情况：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> y <span class="token operator">=</span> x <span class="token operator">+</span> <span class="token function">f</span><span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>程序员的本意可能时，这里是两个语句，但是 javascript 会理解为</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> y <span class="token operator">=</span> x <span class="token operator">+</span> <span class="token function">f</span><span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 解析器会尽可能的理解更长的语句</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>以上的这种情况，程序员的真实意图与 javascript 解析器解析出来的结果完全不一致，这种情况的问题，若果不注意，是很难发现的。</p>
-<p>所以，有些情况下就会出现防御性的分号，还用上一个例子演示。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> y <span class="token operator">=</span> x <span class="token operator">+</span> f<span class="token punctuation">;</span>
-<span class="token punctuation">(</span>a <span class="token operator">+</span> b<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 这里的分号是一个防御性的分号，通常会出现在()或[]开头的语句中，比如;[1,2,3].join(',')</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>上面说到，javascript 会尽可能的理解更长的语句，但是涉及到 return，throw，yield，break 和 continue 语句时，则不然，若以上语句后面没有显性的分号且跟着换行符，解析器则会自动分隔语句，例如：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">return</span><span class="token punctuation">;</span>
-<span class="token boolean">true</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>javascript 理解为</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">return</span><span class="token punctuation">;</span>
-<span class="token boolean">true</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>这意味着，一定不能在 return，break 或 continue 等关键字后面的表达式之间加入换行符。</p>
-]]></content>
-      <categories>
-        <category>理性</category>
-      </categories>
-      <tags>
-        <tag>javascript,大犀牛学习日记</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>记一次关于Webpack的项目经历</title>
     <url>/2022/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%85%B3%E4%BA%8EWebpack%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86/</url>
     <content><![CDATA[<p>趁着有空把我一次关于 Webpack 的项目经历记录一下，其实这个项目是很早之前就做了的，中间重构过两次，而最后一次，即目前的最新代码也是一年前就完成的，只是一直没闲下心记录下来。</p>
@@ -465,7 +983,7 @@ console<span class="token punctuation">.</span><span class="token function">log<
 <h4 id="Views-amp-Assets-层"><a href="#Views-amp-Assets-层" class="headerlink" title="Views &amp; Assets 层"></a>Views &amp; Assets 层</h4><p>此层包括了 pages，components，layouts，assets 和 entries 五个部分。</p>
 <p>components 和 layouts 都是一些 pug 文件，作为复用的布局和组件。比如：</p>
 <p><code>default.pug</code> 是默认的布局文件。</p>
-<pre class="line-numbers language-pug" data-language="pug"><code class="language-pug"><span class="token doctype">doctype html</span>
+<pre class="language-pug" data-language="pug"><code class="language-pug"><span class="token doctype">doctype html</span>
 <span class="token punctuation">-</span><span class="token code"> <span class="token keyword">const</span> langCode <span class="token operator">=</span> lang<span class="token punctuation">.</span><span class="token function">substr</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
 <span class="token keyword">block variables</span>
 <span class="token tag">html<span class="token attributes"><span class="token punctuation">(</span>
@@ -483,21 +1001,21 @@ console<span class="token punctuation">.</span><span class="token function">log<
     <span class="token tag">article</span>
       <span class="token keyword">block top</span>
       <span class="token tag">div<span class="token attr-class">.content</span></span>
-        <span class="token keyword">block content</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+        <span class="token keyword">block content</span></code></pre>
 
 <p><code>contact.pug</code>是公共的组件。</p>
-<pre class="line-numbers language-pug" data-language="pug"><code class="language-pug"><span class="token punctuation">-</span><span class="token code"> <span class="token keyword">const</span> phone <span class="token operator">=</span> <span class="token function">t</span><span class="token punctuation">(</span><span class="token string">"contact_tel"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<pre class="language-pug" data-language="pug"><code class="language-pug"><span class="token punctuation">-</span><span class="token code"> <span class="token keyword">const</span> phone <span class="token operator">=</span> <span class="token function">t</span><span class="token punctuation">(</span><span class="token string">"contact_tel"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
 <span class="token punctuation">-</span><span class="token code"> <span class="token keyword">const</span> email <span class="token operator">=</span> <span class="token function">t</span><span class="token punctuation">(</span><span class="token string">"contact_email"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
 <span class="token punctuation">-</span><span class="token code"> <span class="token keyword">const</span> phoneHtml <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">&lt;a href="tel:</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>phone<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">"></span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>phone<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">&lt;/a></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span></span>
 <span class="token punctuation">-</span><span class="token code"> <span class="token keyword">const</span> emailHtml <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">&lt;a href="mailto:</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>email<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">"></span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>email<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">&lt;/a></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span></span>
 <span class="token punctuation">-</span><span class="token code"> <span class="token keyword">const</span> contactDetailHtml <span class="token operator">=</span> <span class="token function">sprintf</span><span class="token punctuation">(</span><span class="token function">t</span><span class="token punctuation">(</span><span class="token string">"common_contact_p"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> phoneHtml<span class="token punctuation">,</span> emailHtml<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">\n</span><span class="token regex-delimiter">/</span><span class="token regex-flags">g</span></span><span class="token punctuation">,</span> <span class="token string">'&lt;br>'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
 <span class="token flow-control"><span class="token branch keyword">if</span> condition <span class="token comment">// 伪代码，这里隐藏可能敏感的代码</span></span>
   <span class="token tag">h3</span> <span class="token plain-text">#&#123; t("common_contact_title") &#125;</span>
-  <span class="token tag">p</span> <span class="token plain-text">!&#123; contactDetailHtml &#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+  <span class="token tag">p</span> <span class="token plain-text">!&#123; contactDetailHtml &#125;</span></code></pre>
 
 <p>assets 是存放图片文件的，这些图片可能会被组件，布局，pages 的 <code>tpl.png</code> 和 entries 中的 javascript 使用。</p>
 <p>entries 中存放的是被 webpack 打包的 js 和 css 文件，对应 webpack 中的 entries 配置，实际使用如下：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 省略import</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 省略import</span>
 
 module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
   mode<span class="token operator">:</span> process<span class="token punctuation">.</span>env<span class="token punctuation">.</span><span class="token constant">NODE_ENV</span><span class="token punctuation">,</span>
@@ -510,7 +1028,7 @@ module<span class="token punctuation">.</span>exports <span class="token operato
     <span class="token punctuation">)</span><span class="token punctuation">,</span>
   <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
   <span class="token comment">// 省略此后代码</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre>
 
 <p>pages 目录是整个项目中的核心，此目录下包含了很多文件夹，每个文件夹对应一个页面模板，每个目录包含三个文件，分别是：</p>
 <ul>
@@ -519,7 +1037,7 @@ module<span class="token punctuation">.</span>exports <span class="token operato
 <li><code>build.config.js</code> 限制 <code>tpl.pug</code> 的适用范围；</li>
 </ul>
 <p>举例一个实际的<code>build.config.js</code>。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> <span class="token punctuation">&#123;</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> <span class="token punctuation">&#123;</span>
   Page<span class="token punctuation">,</span>
   Code<span class="token punctuation">,</span>
   Platform<span class="token punctuation">,</span>
@@ -537,10 +1055,10 @@ module<span class="token punctuation">.</span>exports <span class="token operato
     platform<span class="token operator">:</span> <span class="token punctuation">[</span>Platform<span class="token punctuation">.</span><span class="token constant">IOS</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
     lang<span class="token operator">:</span> <span class="token punctuation">[</span>Language<span class="token punctuation">.</span>zh_CN<span class="token punctuation">]</span><span class="token punctuation">,</span>
   <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre>
 
 <p>或者另外一个例子：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> <span class="token punctuation">&#123;</span> Page<span class="token punctuation">,</span> Code <span class="token punctuation">&#125;</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"../../utils/constraints"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> <span class="token punctuation">&#123;</span> Page<span class="token punctuation">,</span> Code <span class="token punctuation">&#125;</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"../../utils/constraints"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
 module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
   include<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
@@ -550,7 +1068,7 @@ module<span class="token punctuation">.</span>exports <span class="token operato
   exclude<span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
   chunks<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"aegisMountGuide"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
   dev<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre>
 
 <p>可见，这个 <code>build.config.js</code> 文件主要是为了解决工作量的问题，它可以归纳相同或相似的内容使用相同的<code>tpl.png</code>。</p>
 <p>完整的一个<code>config.build.js</code>可配置属性包括：</p>
@@ -563,7 +1081,7 @@ module<span class="token punctuation">.</span>exports <span class="token operato
 <li><code>dev</code> 可选配置，定义参与开发时 devServer 的适用范围，是 <code>include</code> 配置的子集，设置这个配置是为了提高开发的热重载的效率。之前不设置此配置，每次修改完一处代码，webpack 都会全量更新，而由于项目页面内容过多，造成页面热更新太慢了；</li>
 </ul>
 <p>以上便是 <code>build.config.js</code> 的全部配置说明。一个配置文件仅对应一个<code>tpl.pug</code>，实际的一个 <code>tpl.pug</code> 如下：</p>
-<pre class="line-numbers language-pug" data-language="pug"><code class="language-pug"><span class="token keyword">extends /layouts/default</span>
+<pre class="language-pug" data-language="pug"><code class="language-pug"><span class="token keyword">extends /layouts/default</span>
 <span class="token keyword">block content</span>
   <span class="token punctuation">-</span><span class="token code"> <span class="token keyword">const</span> prefix <span class="token operator">=</span> <span class="token string">"binding_failure_device"</span><span class="token punctuation">;</span></span>
   <span class="token tag">h3</span> <span class="token plain-text">#&#123; t(prefix, "section_1_title") &#125;</span>
@@ -594,22 +1112,22 @@ module<span class="token punctuation">.</span>exports <span class="token operato
   <span class="token flow-control"><span class="token branch keyword">if</span> image</span>
     <span class="token tag">p</span>
       <span class="token tag">img<span class="token attributes"><span class="token punctuation">(</span><span class="token attr-name">src</span><span class="token punctuation">=</span><span class="token attr-value">image</span><span class="token punctuation">)</span></span></span>
-  <span class="token keyword">include /components/contact</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+  <span class="token keyword">include /components/contact</span></code></pre>
 
 <p>可以发现以上两个 <code>tpl.pug</code> 的例子使用了一些变量和方法，比如<code>t()</code>，<code>times()</code>，<code>code</code> 和 <code>Code</code> 等，这些方法和变量（形参）都是通过下一层 Generator 注入进来的。</p>
 <h4 id="Generator-层"><a href="#Generator-层" class="headerlink" title="Generator 层"></a>Generator 层</h4><p>Generator 层的工作是负责收集 pages 目录下的所有 <code>build.config.js</code> 并进行解析分析，生成一个页面配置数组，generator 会遍历次数组，组装成一个 <code>htmlWebpackPlugin</code> 的实例数组，根据实际注入所需的参数和方法，最后交由 Webpack 生成文件。</p>
 <p>一个 <code>htmlWebpackPlugin</code> 如下：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">new</span> <span class="token class-name">HtmlWebpackPlugin</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">new</span> <span class="token class-name">HtmlWebpackPlugin</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
   filename<span class="token operator">:</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>item<span class="token punctuation">.</span>page<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">_</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>item<span class="token punctuation">.</span>corp<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">_</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>item<span class="token punctuation">.</span>lang<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">_</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>item<span class="token punctuation">.</span>code<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">_</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>item<span class="token punctuation">.</span>platform<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">.html</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">,</span>
   template<span class="token operator">:</span> exports<span class="token punctuation">.</span><span class="token function">getRenderFilePath</span><span class="token punctuation">(</span>configFile<span class="token punctuation">)</span><span class="token punctuation">,</span>
   chunks<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token operator">...</span><span class="token punctuation">(</span>isDev <span class="token operator">?</span> <span class="token punctuation">[</span><span class="token string">"simulator"</span><span class="token punctuation">]</span> <span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"main"</span><span class="token punctuation">,</span> <span class="token operator">...</span><span class="token punctuation">(</span>config<span class="token punctuation">.</span>chunks <span class="token operator">||</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
   chunksSortMode<span class="token operator">:</span> <span class="token string">"manual"</span><span class="token punctuation">,</span>
   templateParameters<span class="token operator">:</span> params<span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 
 <p>上面代码中的 <code>item</code> 便是经过配置解析器和分析器处理过后的页面配置，通过拼接起来作为页面名称，而 <code>exports.getRenderFilePath(configFile)</code> 是获取配置文件所在目录下的 <code>tpl.pug</code> 的路径，<code>params</code> 便是注入到页面中所需的参数和方法。</p>
 <p><code>params</code>的组装如下：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> params <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> params <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
   <span class="token comment">// t方法获取制定的key内容</span>
   <span class="token function-variable function">t</span><span class="token operator">:</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter"><span class="token operator">...</span>strings</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
     <span class="token comment">//! 这里设置链接符号为"_"</span>
@@ -638,10 +1156,10 @@ module<span class="token punctuation">.</span>exports <span class="token operato
   Platform<span class="token punctuation">,</span>
   Language<span class="token punctuation">,</span>
   <span class="token operator">...</span>item<span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre>
 
 <p>上面的代码的 <code>t()</code> 是由 i18n &amp; locales 提供的，代码如下：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> en_US <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"../locales/en_US.json"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> en_US <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"../locales/en_US.json"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> zh_CN <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"../locales/zh_CN.json"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> zh_TW <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"../locales/zh_TW.json"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> de_DE <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"../locales/de_DE.json"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -676,12 +1194,12 @@ module<span class="token punctuation">.</span>exports <span class="token operato
   <span class="token keyword">return</span> str <span class="token operator">||</span> <span class="token string">""</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>
 
-module<span class="token punctuation">.</span>exports <span class="token operator">=</span> t<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> t<span class="token punctuation">;</span></code></pre>
 
 <p>最后生成的 <code>htmlWebpackPlugin</code> 实例数组会交由 webpack 处理。</p>
 <h4 id="webpack-层"><a href="#webpack-层" class="headerlink" title="webpack 层"></a>webpack 层</h4><p>webpack 的运行我采用了 node interface 的方式去实现，而不是 webpack-cli。</p>
 <p>webpack 的配置文件如下：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> path <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"path"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> path <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"path"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> MiniCssExtractPlugin <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"mini-css-extract-plugin"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> CssMinimizerPlugin <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"css-minimizer-webpack-plugin"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">const</span> TerserPlugin <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"terser-webpack-plugin"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -770,10 +1288,10 @@ module<span class="token punctuation">.</span>exports <span class="token operato
       chunkFilename<span class="token operator">:</span> <span class="token string">"css/[id].css?[contenthash]"</span><span class="token punctuation">,</span>
     <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
   <span class="token punctuation">]</span><span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre>
 
 <p>build 执行文件如下：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">/**
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">/**
  * Created Date: Thursday, September 2nd 2021, 1:56:14 pm
  * Author: Walden
  * Description: webpack 打包的数据构建和流程
@@ -828,11 +1346,11 @@ compiler<span class="token punctuation">.</span><span class="token function">run
       preset<span class="token operator">:</span> <span class="token string">"minimal"</span><span class="token punctuation">,</span>
     <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
   <span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 
 <p>为了提高打包体验，自定义了打包进度功能。</p>
 <p>devServer 的代码如下：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">/**
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">/**
  * Created Date: Wednesday, September 15th 2021, 11:21:31 am
  * Author: Walden
  * Description: server.js
@@ -855,23 +1373,23 @@ webpackConfig<span class="token punctuation">.</span>plugins<span class="token p
 
 server<span class="token punctuation">.</span><span class="token function">startCallback</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
   console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"Starting server on http://localhost:8080"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 
 <p>package.json 执行指令如下：</p>
-<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+<pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
   <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
     <span class="token property">"dev"</span><span class="token operator">:</span> <span class="token string">"cross-env NODE_ENV=development node ./build/server.js"</span><span class="token punctuation">,</span>
     <span class="token property">"build"</span><span class="token operator">:</span> <span class="token string">"cross-env NODE_ENV=production node ./build/index.js"</span><span class="token punctuation">,</span>
     <span class="token property">"build:docs"</span><span class="token operator">:</span> <span class="token string">"webpack build --config ./build-docs/webpack.config.js --mode production"</span><span class="token punctuation">,</span>
     <span class="token property">"dev:docs"</span><span class="token operator">:</span> <span class="token string">"webpack serve --config ./build-docs/webpack.config.js --mode development"</span>
   <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span></code></pre>
 
 <p>下面是实际打包的截图：</p>
 <p><img src="/images/build-snapshot.png" alt="打包截图"></p>
 <p>通过上图可见，实际的开发中只需维护 30+个模板就可以生成 5000+个页面，而且页面的内容都是全静态的，无需 javascript 运行渲染。</p>
 <p>以下是实际生成的 html（实际已压缩，这里为了方便阅读，我格式化了）：</p>
-<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">></span></span>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">></span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>de<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">></span></span>
     <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
@@ -915,7 +1433,7 @@ server<span class="token punctuation">.</span><span class="token function">start
       <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
     <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>article</span><span class="token punctuation">></span></span>
   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">></span></span>
-<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">></span></span></code></pre>
 
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实项目还配有一个审核系统，同样也是 SSG 实现的，原理差不多，这里就不记录了。关于这个审核系统是我在日常维护中，发现需求和测试不方便全面核对内容，所以我就自主的搞了一个系统出来，效果非常好。</p>
 <p>以上便是关于我一次 Webpack 的项目经历的所有内容，虽然技术并不难，但是也是充满了挑战的，非常享受这种通过重构项目而让项目变得更加好的感觉。</p>
@@ -925,524 +1443,6 @@ server<span class="token punctuation">.</span><span class="token function">start
       </categories>
       <tags>
         <tag>项目经历,webpack</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>v-show 与 v-if的区别</title>
-    <url>/2017/09/13/v-show-%E4%B8%8E-v-if%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p>在 vue 中，<code>v-show</code>和<code>v-if</code>都是用来控制元素或组件的显示和隐藏，但是它们的显示和隐藏的实现机制有着根本性的差别。</p>
-<p><code>v-show</code>是通过控制 dom 元素的样式<code>display: none</code>的动态添加和去除来实现元素的显示和隐藏的。</p>
-<p>而<code>v-if</code>则是通过操作 dom 元素的创建，插入和移除来实现的。一般情况下通过<code>v-if</code>来控制组件的显示和隐藏会进行组件的创建，挂载和销毁，也就是说，<code>v-if</code>的变化会触发组件的生命周期钩子，但是如果通过<code>keep-alive</code>包裹起来，则不会触发创建，挂载和销毁，但是会触发激活钩子<code>activated</code>，即便如此，<code>v-if</code>的元素或组件的显示和隐藏都是通过 dom 操作实现的。</p>
-<p>如果明白以上的原理，那么就可以分析它们的优缺点和适用场景。</p>
-<p><code>v-show</code>的优点就是在切换显示隐藏这个动作上效率高，性能好，切占用资源少，因为 dom 元素一直都存在，只是简单修改样式而已。</p>
-<p>但是在首次页面渲染的时候，针对那些内容很多的元素，或者很复杂的组件，它们不要求立刻显示，但是仅通过<code>v-show</code>来控制隐藏的话，它们在页面渲染时还是会挂载在页面上的，这就造成了不必要的资源浪费，这也是<code>v-show</code>的一个明显缺点。</p>
-<p><code>v-show</code>的优缺点都是围绕着“dom 元素会存在于文档流中”这一个实际去分析的。针对一些 SSR 的项目，如果要求用户登录之后才能看到某些敏感内容，比如一些资源的下载链接，这个时候用<code>v-show</code>就起不到资源保护的作用，这又是<code>v-show</code>的另外一个缺点。</p>
-<p>而以上两个关于<code>v-show</code>的缺点，通过使用<code>v-if</code>都能非常好的得到解决。我认为<code>v-if</code>的一个最重要的优点就是它能够实现异步组件的功能，这能够非常好的防止资源浪费。</p>
-<p>但是，<code>v-if</code>的显示和隐藏切换的性能是比不过<code>v-show</code>的，即便通过<code>keep-alive</code>来缓存组件状态和数据。</p>
-<p>根据以上的分析可知它们的适用场景。</p>
-<p><code>v-show</code>的适用场景：</p>
-<ul>
-<li>需要频繁切换显示和隐藏的元素或组件；</li>
-<li>规模比较小的组件或者元素的显示隐藏控制；</li>
-</ul>
-<p><code>v-if</code>的适用场景：</p>
-<ul>
-<li>无需频繁切换显示隐藏的元素或组件；</li>
-<li>异步组件；</li>
-<li>资源保护；</li>
-<li>每次显示和隐藏都有触发生命周期钩子的需求；</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>vue,学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>vue组件生命周期的表现研究</title>
-    <url>/2017/09/10/vue%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</url>
-    <content><![CDATA[<p>要了解透彻 vue 组件生命周期中每一个阶段做了什么工作，这不是一件简单的事情，这其中可能需要了解 vue 的底层原理，才能明白每一个阶段做了什么工作和为什么需要做这些工作。暂时还没有到研究 vue 底层原理的地步，所以本篇文章仅仅是分析组件或嵌套组件的一些情况。</p>
-<p>要了解生命周期就肯定得知道生命周期钩子函数。所谓钩子函数其实际就是一个函数，而“钩子”的表意是该函数与某一个事物或者动作挂钩，当这个事物或动作发生指定的情况，与之连接的“钩子”就会被牵动，从而触发函数的执行。这里的表现与 dom 元素的事件监听非常相似，事实上无论是 dom 元素事件监听还是 vue 生命周期钩子都是一种订阅发布的设计模式。</p>
-<p>这里就不展开订阅发布设计模式的说明了，我们只需要知道，vue 生命周期钩子函数会在生命周期的某一刻被 vue 内部逻辑执行。</p>
-<p>这里实现一个超超超简单的例子。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 定义一个组件实例</span>
-<span class="token keyword">const</span> vueComp <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
-  <span class="token function">created</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"vueComp is created."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"vueComp is mounted"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-
-<span class="token function">renderComp</span><span class="token punctuation">(</span>vueComp<span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-<span class="token comment">// 假设这是一个vue的组件创建逻辑</span>
-<span class="token keyword">function</span> <span class="token function">renderComp</span><span class="token punctuation">(</span><span class="token parameter">compConfig</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-  <span class="token comment">// created前准备</span>
-  <span class="token comment">// 完成创建后，手动拉一下钩子</span>
-  compConfig<span class="token punctuation">.</span><span class="token function">created</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token comment">// mounted前准备</span>
-  <span class="token comment">// 完成挂载后，手动拉一下钩子</span>
-  compConfig<span class="token punctuation">.</span><span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>以上就是最根本的钩子函数的执行过程，当然 vue 的组件创建和挂载渲染流程肯定会复杂很多，但是道理应该是相似的。</p>
-<p>那么 vue 有哪些生命周期钩子呢？</p>
-<ul>
-<li>beforeCreate</li>
-<li>created</li>
-<li>beforeMount</li>
-<li>mounted</li>
-<li>beforeUpdate</li>
-<li>updated</li>
-<li>beforeDestroy</li>
-<li>destroyed</li>
-</ul>
-<p>另外还有两个虽然不在官方的生命周期图中，但是我认为它们也是生命周期的一环，它们是：</p>
-<ul>
-<li>activated</li>
-<li>deactivated</li>
-</ul>
-<p>注意，<code>activated</code> 和 <code>deactivated</code> 只有在 <code>keep-alive</code> 包裹下的组件中才会被触发，否则不会被触发，它们有点类似<code>onShow</code> 和 <code>onHide</code>的意思。因为 <code>keep-alive</code> 包裹下的组件是会被缓存起来的，创建和挂载的相关钩子只会被触发一次，而 <code>activated</code> 和 <code>deactivated</code> 分别在每一次的显示和隐藏的时候都会被触发，所以某些初始化和复位的操作可以在这两个钩子函数中处理。</p>
-<p>在一个完整的生命周期中组件的钩子函数的执行顺序是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">                                                    deactivated
-                                                     |       |
-beforeCreate -&gt; created -&gt; beforeMount -&gt; mounted -&gt; activated --------&gt; beforeDestroy -&gt; destroyed
-                                                                |     |
-                                                      beforeUpdate -&gt; updated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>目前阶段，值得研究的应该是更新的钩子函数。在 vue 的机制中，<code>beforeUpdate</code> 和 <code>updated</code> 只有在组件挂载完成后，即<code>mounted</code>被执行后，该组件的 data 数据发生变化并且驱动视图变化才会触发这两个钩子函数，如果仅仅是 data 数据发生变化，但是不影响视图，那么这两个钩子是不会被触发的。</p>
-<p>或者直接通过 dom 操作来改变视图，这也不会触发更新的钩子函数，因为这种行为是脱离了 vue 的生命周期控制的。</p>
-<p>另外，还有一点很重要，那就是组件的更新和渲染是异步的。关于异步又会牵扯出一大堆关于事件循环和执行栈的知识，这里暂不研究，实际上我还不是很了解。我们暂时只理解为，vue 会把所有同步操作执行完成后，关于 data 数据的修改会被整合成一次操作，最后再去更新视图，然后触发更新的钩子函数。</p>
-<p>简单的写一个例子：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
-  count<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-
-data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
-data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
-data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
-
-<span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
-  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>count<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 打印结果：5</span>
-  <span class="token comment">// render view and exec updatedHook function</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
-data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>以上例子可以很初步的了解到异步渲染的原理。目前关于 vue 组件的更新钩子函数我们暂时掌握到这里，等后续深入 vue 原理的时候再补充内容。</p>
-<p>而其他的钩子函数，我们主要留意一下几点应该没什么问题了。</p>
-<ol>
-<li>在 <code>created</code> 或者 <code>beforeCreate</code> 中做一些早期的初始化工作；</li>
-<li>在 <code>mounted</code> 钩子函数中可以做 dom 操作；</li>
-<li>在 <code>destroyed</code> 或者 <code>beforeDestroy</code> 中释放资源；</li>
-<li>在 <code>beforeCreate</code> 中无法读取 <code>this</code> 对象；</li>
-</ol>
-<p>分析完一个组件的生命周期，我们来分析一下组件嵌套的情况下，父子组件的生命周期钩子函数的执行顺序。我们先写一个例子。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;!-- App.vue --&gt;
-&lt;template&gt;
-  &lt;div id&#x3D;&quot;app&quot;&gt;
-    &lt;button @click&#x3D;&quot;toggleChildCompVisible&quot;&gt;Toggle&lt;&#x2F;button&gt;
-    &lt;button @click&#x3D;&quot;changeCount&quot;&gt;Change count&lt;&#x2F;button&gt;
-    &lt;button @click&#x3D;&quot;changeCount2&quot;&gt;Change count2&lt;&#x2F;button&gt;
-    &lt;button @click&#x3D;&quot;changeCount3&quot;&gt;Change count3&lt;&#x2F;button&gt;
-    &lt;button @click&#x3D;&quot;changeCountTroughRefMethod&quot;&gt;Change count4&lt;&#x2F;button&gt;
-    &lt;ParentComp
-      ref&#x3D;&quot;parentComp&quot;
-      v-if&#x3D;&quot;isShow&quot;
-      :count&#x3D;&quot;count&quot;
-      :count2&#x3D;&quot;count2&quot;
-      :count3&#x3D;&quot;count3&quot;
-    &#x2F;&gt;
-  &lt;&#x2F;div&gt;
-&lt;&#x2F;template&gt;
-
-&lt;script&gt;
-import ParentComp from &quot;.&#x2F;components&#x2F;ParentComp&quot;;
-
-export default &#123;
-  name: &quot;App&quot;,
-  components: &#123;
-    ParentComp,
-  &#125;,
-  data() &#123;
-    return &#123;
-      isShow: true,
-      count: 0,
-      count2: 0,
-      count3: 0,
-      count4: 0,
-    &#125;;
-  &#125;,
-  methods: &#123;
-    toggleChildCompVisible() &#123;
-      this.isShow &#x3D; !this.isShow;
-    &#125;,
-    changeCount() &#123;
-      this.count++;
-    &#125;,
-    changeCount2() &#123;
-      this.count2++;
-    &#125;,
-    changeCount3() &#123;
-      this.count3++;
-    &#125;,
-    changeCountTroughRefMethod() &#123;
-      this.count4++;
-      this.$refs.parentComp.changeCount(this.count4);
-    &#125;,
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;!-- &#x2F;components&#x2F;ParentComp.vue --&gt;
-&lt;template&gt;
-  &lt;div&gt;
-    ParentComp
-    &lt;ChildComp ref&#x3D;&quot;childComp&quot; :count&#x3D;&quot;count&quot; :count2&#x3D;&quot;count2&quot; &#x2F;&gt;
-  &lt;&#x2F;div&gt;
-&lt;&#x2F;template&gt;
-
-&lt;script&gt;
-import ChildComp from &quot;.&#x2F;ChildComp&quot;;
-
-export default &#123;
-  name: &quot;ParentComp&quot;,
-  components: &#123;
-    ChildComp,
-  &#125;,
-  props: &#123;
-    count: &#123;
-      type: Number,
-    &#125;,
-    count2: &#123;
-      type: Number,
-    &#125;,
-    count3: &#123;
-      type: Number,
-    &#125;,
-  &#125;,
-  beforeCreate() &#123;
-    console.log(&quot;ParentComp beforeCreate&quot;);
-  &#125;,
-  created() &#123;
-    console.log(&quot;ParentComp created&quot;);
-  &#125;,
-  beforeMount() &#123;
-    console.log(&quot;ParentComp beforeMount&quot;);
-  &#125;,
-  mounted() &#123;
-    console.log(&quot;ParentComp mounted&quot;);
-  &#125;,
-  beforeUpdate() &#123;
-    console.log(&quot;ParentComp beforeUpdate&quot;);
-  &#125;,
-  updated() &#123;
-    console.log(&quot;ParentComp updated&quot;);
-  &#125;,
-  activated() &#123;
-    console.log(&quot;ParentComp activated&quot;);
-  &#125;,
-  deactivated() &#123;
-    console.log(&quot;ParentComp deactivated&quot;);
-  &#125;,
-  beforeDestroy() &#123;
-    console.log(&quot;ParentComp beforeDestroy&quot;);
-  &#125;,
-  destroyed() &#123;
-    console.log(&quot;ParentComp destroyed&quot;);
-  &#125;,
-  methods: &#123;
-    changeCount(num) &#123;
-      this.$refs.childComp.changeCount(num);
-    &#125;,
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;!-- &#x2F;components&#x2F;ChildComp.vue --&gt;
-&lt;template&gt;
-  &lt;div&gt;ChildComp&#123;&#123; count &#125;&#125; &#123;&#123; count4 &#125;&#125;&lt;&#x2F;div&gt;
-&lt;&#x2F;template&gt;
-
-&lt;script&gt;
-export default &#123;
-  name: &quot;ChildComp&quot;,
-  props: &#123;
-    count: &#123;
-      type: Number,
-    &#125;,
-    count2: &#123;
-      type: Number,
-    &#125;,
-  &#125;,
-  data() &#123;
-    return &#123;
-      count4: 0,
-    &#125;;
-  &#125;,
-  beforeCreate() &#123;
-    console.log(&quot;ChildComp beforeCreate&quot;);
-  &#125;,
-  created() &#123;
-    console.log(&quot;ChildComp created&quot;);
-  &#125;,
-  beforeMount() &#123;
-    console.log(&quot;ChildComp beforeMount&quot;);
-  &#125;,
-  mounted() &#123;
-    console.log(&quot;ChildComp mounted&quot;);
-  &#125;,
-  beforeUpdate() &#123;
-    console.log(&quot;ChildComp beforeUpdate&quot;);
-  &#125;,
-  updated() &#123;
-    console.log(&quot;ChildComp updated&quot;);
-  &#125;,
-  activated() &#123;
-    console.log(&quot;ChildComp activated&quot;);
-  &#125;,
-  deactivated() &#123;
-    console.log(&quot;ChildComp deactivated&quot;);
-  &#125;,
-  beforeDestroy() &#123;
-    console.log(&quot;ChildComp beforeDestroy&quot;);
-  &#125;,
-  destroyed() &#123;
-    console.log(&quot;ChildComp destroyed&quot;);
-  &#125;,
-  methods: &#123;
-    changeCount(num) &#123;
-      this.count4 &#x3D; num;
-    &#125;,
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>页面初次渲染的时候能够获得以下日志：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ParentComp beforeCreate
-ParentComp created
-ParentComp beforeMount
-ChildComp beforeCreate
-ChildComp created
-ChildComp beforeMount
-ChildComp mounted
-ParentComp mounted<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>点击 Toggle 按钮后隐藏组件后，能够获得以下日志：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ParentComp beforeDestroy
-ChildComp beforeDestroy
-ChildComp destroyed
-ParentComp destroyed<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>如果考虑 <code>keep-alive</code> 的话，ChildComp activated 和 ParentComp activated 会依次在 ParentComp mounted 后执行。而隐藏组件的话，并不会销毁组件，所以日志如下：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ChildComp deactivated
-ParentComp deactivated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>然后验证了关于更新钩子的一些情况，分别依次点击按钮 Change count，Change count2，Change count3，Change count4，能够获得已下日志：</p>
-<p>Change count：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ParentComp beforeUpdate
-ChildComp beforeUpdate
-ChildComp updated
-ParentComp updated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>Change count2：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ParentComp beforeUpdate
-ParentComp updated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>点击 Change count3 没有任何日志产生。</p>
-<p>Change count4：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ChildComp beforeUpdate
-ChildComp updated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>分析可以得出以下结论：</p>
-<ul>
-<li>按钮 123 三个测试可以分析出，父组件的 data 和 props 发生变化后，不一定就会触发本组件的更新，按照上文的更新钩子函数的分析，需要引起视图变化才会触发更新钩子函数，还有一种情况就是，把变化的属性传入到子组件中，即便子组件并没有引起视图变化，但是在父组件的角度来看，子组件是视图的一部分，而此时子组件的属性确实发生了变化，所以父组件依旧会触发更新的钩子函数，否则其他情况不会触发更新钩子；</li>
-<li>按钮 4 得出的结论，子组件的更新并不一定会触发父组件的更新钩子函数，还是那个道理，模型+视图变化才会触发更新钩子；</li>
-</ul>
-<p>以上就是本篇文章关于 vue 组件的生命周期的所有研究。关于“每个生命周期 vue 内部做了什么工作”，这需要深入 vue 的源码研究，往后会另开一文来记录。此外还有 mixin 的情况分析，这也会新起一篇文章来记录。</p>
-]]></content>
-      <tags>
-        <tag>vue,学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>vue组件间通讯</title>
-    <url>/2017/09/13/vue%E7%BB%84%E4%BB%B6%E9%97%B4%E9%80%9A%E8%AE%AF/</url>
-    <content><![CDATA[<p>本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。</p>
-<p>其实能够实现组件间通讯的形式有很多，这里列出常用的几种。</p>
-<h3 id="方式一：props"><a href="#方式一：props" class="headerlink" title="方式一：props"></a>方式一：props</h3><p>父组件通过以下方式向子组件传递数据。</p>
-<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>子组件通过 <code>props</code> 接受父组件的数据。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  props: &#123;
-    count: &#123;
-      type: Number,
-      required: true,
-    &#125;,
-  &#125;,
-  &#x2F;&#x2F; ...
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>props 方式是由 vue 的响应式机制驱动的，而其响应式机制的实现是依靠原生 javascript api <code>Object.defineProperty</code> 代理数据模型的属性的 getter 和 setter 方法实现的，其中的原理与代理模式相似，这里不做详细的研究。</p>
-<h3 id="方式二：组件事件监听与-emit"><a href="#方式二：组件事件监听与-emit" class="headerlink" title="方式二：组件事件监听与$emit"></a>方式二：组件事件监听与$emit</h3><p>父组件通过<code>@</code>符或者<code>v-on:</code>来监听子组件的事件。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
-  &lt;ChildComp @cry&#x3D;&quot;onChildCry&quot; &#x2F;&gt;
-&lt;&#x2F;template&gt;
-
-&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  methods: &#123;
-    onChildCry() &#123;
-      &#x2F;&#x2F; do something
-    &#125;,
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>子组件通过 <code>$emit</code> api 把指定事件抛给父组件。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;script&gt;
-export default &#123;
-  mounted() &#123;
-    &#x2F;&#x2F; when the child is hungry
-    if (isHungry) &#123;
-      this.$emit(&quot;cry&quot;);
-    &#125;
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>这种方式的表现形式与 dom0 级事件监听很类似，但是其实质是不一样的。这里简单地分析一下 vue 的组件事件监听的原理。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 假设这是父组件实例</span>
-<span class="token keyword">const</span> parentCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
-  <span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">// do something</span>
-  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-
-<span class="token comment">// 假设这是子组件的实例</span>
-<span class="token keyword">const</span> childCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
-  listeners<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">// 父组件添加子组件监听事件时，其实是在子组件中新增一个事件和处理器的映射</span>
-    <span class="token comment">// !注意⚠️，这里只是粗浅的原理分析，并不是vue的真实情况</span>
-    <span class="token comment">// !vue会保护handler的执行上下文</span>
-    <span class="token function-variable function">cry</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> parentCompIns<span class="token punctuation">.</span><span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">// 抛出事件</span>
-    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$emit</span><span class="token punctuation">(</span><span class="token string">"cry"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-  <span class="token function">$emit</span><span class="token punctuation">(</span><span class="token parameter">eventName</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">// 检索事件，如果注册了则执行，否则忽略</span>
-    <span class="token keyword">const</span> handler <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>listeners<span class="token punctuation">[</span>eventName<span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token keyword">typeof</span> handler <span class="token operator">===</span> <span class="token string">"function"</span> <span class="token operator">&amp;&amp;</span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="方式三：vuex-状态管理器"><a href="#方式三：vuex-状态管理器" class="headerlink" title="方式三：vuex 状态管理器"></a>方式三：vuex 状态管理器</h3><p>状态管理器 vuex 也可以实现组件间的通讯，而且这是一个非常好的代码解藕的途径。vuex 的实现原理应该是围绕着两个核心概念，分别是数据中心和通知。这里不会详细讨论 vuex 的使用，后面会单独开一篇文章来记录。</p>
-<h3 id="方式四：-refs-调用组件实例方法"><a href="#方式四：-refs-调用组件实例方法" class="headerlink" title="方式四：$refs 调用组件实例方法"></a>方式四：$refs 调用组件实例方法</h3><p>vue 中可以通过 $refs 获取一个组件的实例，然后可以通过实例调用实例方法实现组件间的通讯。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
-  &lt;ChildComp ref&#x3D;&quot;childComp&quot; &#x2F;&gt;
-&lt;&#x2F;template&gt;
-
-&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  mounted() &#123;
-    this.$refs.childComp.doSomething(...args);
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="方式五：事件总线-EventBus"><a href="#方式五：事件总线-EventBus" class="headerlink" title="方式五：事件总线 EventBus"></a>方式五：事件总线 EventBus</h3><p>事件总线是一种解决两个“东西”之间的通讯的方案，这不是 vue 独有的。我不知道其他语言或者平台的事件总线会有什么实现的差别，而 vue 中 EventBus 可以通过订阅发布的设计模式进行实现。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-  <span class="token keyword">const</span> _listeners <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-
-  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$on</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">eventName<span class="token punctuation">,</span> handler</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">// validate 做入参的判断，eventName是字符串，handler为function</span>
-    <span class="token comment">// 生成监听器的id，可用于移除操作</span>
-    <span class="token keyword">const</span> id <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment">// 注册事件</span>
-    _listeners<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
-      id<span class="token punctuation">,</span>
-      eventName<span class="token punctuation">,</span>
-      <span class="token comment">// 维护handler的执行上下文</span>
-      <span class="token function-variable function">handler</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter"><span class="token operator">...</span>args</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">,</span>
-    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-    <span class="token keyword">return</span> id<span class="token punctuation">;</span>
-  <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-
-  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$emit</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">eventName<span class="token punctuation">,</span> <span class="token operator">...</span>args</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">// do validating</span>
-    _listeners
-      <span class="token punctuation">.</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">item</span><span class="token punctuation">)</span> <span class="token operator">=></span> item<span class="token punctuation">.</span>eventName <span class="token operator">===</span> eventName<span class="token punctuation">)</span>
-      <span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter"><span class="token punctuation">&#123;</span> handler <span class="token punctuation">&#125;</span></span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-
-  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$off</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">id</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">// 移除操作</span>
-  <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-
-  <span class="token comment">// ...</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>以上便是一个基本的事件总线的实现，这个 EventBus 就是一个事件和消息的处理网关，通过网关实例可以订阅指定的事件和发布指定事件消息，EventBus 负责登记和分发消息，这便是订阅发布的设计模式。所以我也称 EventBus 为事件驿站（只是个人的看法）。</p>
-<p>至于如何使用 EventBus。我们可以先实例一个 EventBus，把它挂载在全局 window 对象下，或者挂载在 Vue 的原型上都是可以的，又或者通过模块导出一个实例。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token class-name">Vue</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span>eventBus <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>组件可以通过如此使用。注意，使用 EventBus 时，需要注意在组件销毁的时候一定要卸载监听器，否则有可能造成内存泄漏。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
-  &lt;!-- 组件一，省略内容 --&gt;
-&lt;&#x2F;template&gt;
-
-&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  mounted() &#123;
-    &#x2F;&#x2F; 缓存监听器id
-    this.listener &#x3D; this.eventBus.$on(&quot;customEvent&quot;, function () &#123;
-      &#x2F;&#x2F; do something
-    &#125;);
-  &#125;,
-  destroy() &#123;
-    &#x2F;&#x2F; 记得卸载监听器
-    this.eventBus.$off(this.listener);
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
-  &lt;!-- 组件二，省略内容 --&gt;
-&lt;&#x2F;template&gt;
-
-&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  mounted() &#123;
-    &#x2F;&#x2F; 发布消息
-    this.eventBus.$emit(&quot;customEvent&quot;);
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>EventBus 也是一种代码解藕的途径，但是这种方式一般在实际开发的项目中不太推荐采用，不推荐的原因有：</p>
-<ul>
-<li>可追溯性和可读性差；</li>
-<li>需要卸载监听器，否则一直占用资源，严重还会造成内存泄漏；</li>
-</ul>
-<p>所以，EventBus 应该被视作一种保留方案，通常那些不好通过状态管理器 vuex 实现，或者组件间跨度太大的情况下才考虑使用 EventBus。</p>
-<h3 id="方式六：全局数据"><a href="#方式六：全局数据" class="headerlink" title="方式六：全局数据"></a>方式六：全局数据</h3><p>其实这里说的全局数据的方式在上述的方法中也有体现，比如 vuex 或者事件总线都有体现全局数据，只是后两者会更复杂而且具备一定的通知机制。而这里说到的全局数据更简单粗暴一点，我们可以把一个对象挂载在全局 window 下，或者挂载在 Vue 的原型上，又或者通过模块导出，然后各个组件就可以访问到这个对象下的数据了。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>好了，以上便是关于组件间通讯方式的研究结果。</p>
-]]></content>
-      <tags>
-        <tag>vue,学习笔记</tag>
       </tags>
   </entry>
 </search>

@@ -1,155 +1,271 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="theme-color" content=#58b77a>
-  <title>vue组件间通讯 | Walden&#39;s 自画像</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="Walden">
-  <meta name="keywords" content="walden,blog,IT,程序员,Web前端,Web,前端,感性,理性">
-  <meta name="description" content="Walden's 自画像 | 我的身体存在一半理性，一半感性。它们合力扶直我的身体躯壳，以至于二十多年来跌倒还能站起来，继续前行。">
-  <script id="hexo-configurations">
-  var CONFIG = {
-    root: '/',
-    theme: 'lx',
-    version: '0.4.3',
-    localsearch:{
-      "enable": true,
-      "trigger": "auto",
-      "top_n_per_article": 1,
-      "unescape": false,
-      "preload": false
-      },
-    path: 'search.xml'
-  };
+    <meta charset="utf-8" />
+
+    
+
+    
+    <title>vue组件间通讯 | Walden&#39;s 自画像</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="keywords" content="vue,学习笔记" />
+    
+    <meta name="description" content="本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。 其实能够实现组件间通讯的形式有很多，这里列出常用的几种。 方式一：props父组件通过以下方式向子组件传递数据。 &lt;ChildComp :count&#x3D;&quot;count&quot; &#x2F;&gt;  子组件通过 props 接受父组件的数据。 &lt;script&gt; export default &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue组件间通讯">
+<meta property="og:url" content="http://example.com/2017/09/13/vue%E7%BB%84%E4%BB%B6%E9%97%B4%E9%80%9A%E8%AE%AF/index.html">
+<meta property="og:site_name" content="Walden&#39;s 自画像">
+<meta property="og:description" content="本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。 其实能够实现组件间通讯的形式有很多，这里列出常用的几种。 方式一：props父组件通过以下方式向子组件传递数据。 &lt;ChildComp :count&#x3D;&quot;count&quot; &#x2F;&gt;  子组件通过 props 接受父组件的数据。 &lt;script&gt; export default &amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-09-13T03:40:51.000Z">
+<meta property="article:modified_time" content="2022-04-15T06:27:29.411Z">
+<meta property="article:author" content="Walden">
+<meta property="article:tag" content="vue,学习笔记">
+<meta name="twitter:card" content="summary">
+    
+
+    
+        <link rel="alternate" href="/" title="Walden&#39;s 自画像" type="application/atom+xml" />
+    
+
+    
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" integrity="sha512-vswe+cgvic/XBoF1OcM/TeJ2FW0OofqAVdCZiEYkd6dwGXthvkSFWOoGGJgS2CW70VK5dQM5Oh+7ne47s74VTg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/titillium-web/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+<script src="/libs/jquery/3.5.0/jquery.min.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                        <h2 class="subtitle-wrap">
+                            <p class="subtitle">我的身体存在一半理性，一半感性。它们合力扶直我的身体躯壳，以至于二十多年来跌倒还能站起来，继续前行。</p>
+                        </h2>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                    <ul class="main-nav-list"><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></li></ul>
+                                
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/about/index.html">关于</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
 </script>
 
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/css/main.min.css">
-  
-  <style type="text/css">
-    pre,
-    code {
-      font-family: 'Fira Code', monospace;
-    }
-    html {
-      font-family: sans-serif;
-    }
-    body {
-      font-family: sans-serif;
-    }
-    h1, h2, h3, h4, h5, figure {
-      font-family: sans-serif;
-    }
-    .menu-container{
-      font-family: sans-serif;
-    }
-  </style>
+<script src="/js/insight.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/js/jquery.jside.menu.min.js"></script>
-	<script>
-	$(document).ready(function(){
-	$(".menu-container").jSideMenu({
-	    jSidePosition: "position-right",
-	    jSideSticky: true,
-	    jSideSkin: "",
-	     });
-	}); 
-	</script>
-  
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira Code:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
-<meta name="generator" content="Hexo 6.1.0"></head>
-<body>
-<div class="single">
-<div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off"
-             placeholder="Search..." spellcheck="false"
-             type="text" id="local-search-input">
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <div id="local-search-result"></div>
+</header>
+
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    未分类
+    </h1>
 </div>
 
-<div id="page">
-<div class="header">
-  <div id="lx-aside" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/post_cover.min.jpeg)" data-stellar-background-ratio="0.5">
-    <div class="overlay">
-      <a href="javascript:;" class="popup-trigger" title="search"><i class="menu-item-icon fa fa-search fa-fw"></i></a>
-      <div class="page-title">
-        <div class="avatar"><a href="/"><img src="https://avatars.githubusercontent.com/u/32896703?v=4" alt="Walden"></a></div>
-        <span>2017-09-13</span>
-        <h2>vue组件间通讯</h2>
-        <div class="tags"><i class="fa fa-tag"></i><a class="tag-none-link" href="/tags/vue-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">vue,学习笔记</a></div>
+                        <div class="main-body-content">
+                            <article id="post-vue组件间通讯" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
         
-      </div>
-    </div>
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        vue组件间通讯
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-meta">
+                
+  <div class="article-date">
+    <i class="fa fa-calendar"></i>
+    <a href="/2017/09/13/vue%E7%BB%84%E4%BB%B6%E9%97%B4%E9%80%9A%E8%AE%AF/" class="article-date">
+       <time datetime="2017-09-13T03:40:51.000Z" itemprop="datePublished">2017-09-13</time>
+    </a>
   </div>
+
+
+<div class="article-date">
+  <i class="fa fa-calendar-plus-o"></i>
+  <a href="/2017/09/13/vue%E7%BB%84%E4%BB%B6%E9%97%B4%E9%80%9A%E8%AE%AF/" class="article-date">
+     <time datetime="2022-04-15T06:27:29.411Z" itemprop="dateModified">2022-04-15</time>
+  </a>
 </div>
-<div id="lx-main-content">
-  <div class="lx-post">
-    <div class="lx-entry padding">
-      <div>
-        <p>本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。</p>
+
+
+                
+
+                
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link-link" href="/tags/vue-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">vue,学习笔记</a>
+    </div>
+
+                
+
+                
+
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            
+
+            
+
+            
+
+            <p>本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。</p>
 <p>其实能够实现组件间通讯的形式有很多，这里列出常用的几种。</p>
 <h3 id="方式一：props"><a href="#方式一：props" class="headerlink" title="方式一：props"></a>方式一：props</h3><p>父组件通过以下方式向子组件传递数据。</p>
-<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span></code></pre>
 
 <p>子组件通过 <code>props</code> 接受父组件的数据。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  props: &#123;
-    count: &#123;
-      type: Number,
-      required: true,
-    &#125;,
-  &#125;,
-  &#x2F;&#x2F; ...
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  props<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    count<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+      required<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token comment">// ...</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
 
 <p>props 方式是由 vue 的响应式机制驱动的，而其响应式机制的实现是依靠原生 javascript api <code>Object.defineProperty</code> 代理数据模型的属性的 getter 和 setter 方法实现的，其中的原理与代理模式相似，这里不做详细的研究。</p>
 <h3 id="方式二：组件事件监听与-emit"><a href="#方式二：组件事件监听与-emit" class="headerlink" title="方式二：组件事件监听与$emit"></a>方式二：组件事件监听与$emit</h3><p>父组件通过<code>@</code>符或者<code>v-on:</code>来监听子组件的事件。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
-  &lt;ChildComp @cry&#x3D;&quot;onChildCry&quot; &#x2F;&gt;
-&lt;&#x2F;template&gt;
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">@cry</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>onChildCry<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
 
-&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  methods: &#123;
-    onChildCry() &#123;
-      &#x2F;&#x2F; do something
-    &#125;,
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  methods<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token comment">// do something</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
 
 <p>子组件通过 <code>$emit</code> api 把指定事件抛给父组件。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;script&gt;
-export default &#123;
-  mounted() &#123;
-    &#x2F;&#x2F; when the child is hungry
-    if (isHungry) &#123;
-      this.$emit(&quot;cry&quot;);
-    &#125;
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// when the child is hungry</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>isHungry<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$emit</span><span class="token punctuation">(</span><span class="token string">"cry"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
 
 <p>这种方式的表现形式与 dom0 级事件监听很类似，但是其实质是不一样的。这里简单地分析一下 vue 的组件事件监听的原理。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 假设这是父组件实例</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 假设这是父组件实例</span>
 <span class="token keyword">const</span> parentCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
   <span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
     <span class="token comment">// do something</span>
@@ -173,25 +289,25 @@ export default &#123;
     <span class="token keyword">const</span> handler <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>listeners<span class="token punctuation">[</span>eventName<span class="token punctuation">]</span><span class="token punctuation">;</span>
     <span class="token keyword">typeof</span> handler <span class="token operator">===</span> <span class="token string">"function"</span> <span class="token operator">&amp;&amp;</span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre>
 
 <h3 id="方式三：vuex-状态管理器"><a href="#方式三：vuex-状态管理器" class="headerlink" title="方式三：vuex 状态管理器"></a>方式三：vuex 状态管理器</h3><p>状态管理器 vuex 也可以实现组件间的通讯，而且这是一个非常好的代码解藕的途径。vuex 的实现原理应该是围绕着两个核心概念，分别是数据中心和通知。这里不会详细讨论 vuex 的使用，后面会单独开一篇文章来记录。</p>
 <h3 id="方式四：-refs-调用组件实例方法"><a href="#方式四：-refs-调用组件实例方法" class="headerlink" title="方式四：$refs 调用组件实例方法"></a>方式四：$refs 调用组件实例方法</h3><p>vue 中可以通过 $refs 获取一个组件的实例，然后可以通过实例调用实例方法实现组件间的通讯。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
-  &lt;ChildComp ref&#x3D;&quot;childComp&quot; &#x2F;&gt;
-&lt;&#x2F;template&gt;
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">ref</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>childComp<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
 
-&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  mounted() &#123;
-    this.$refs.childComp.doSomething(...args);
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>$refs<span class="token punctuation">.</span>childComp<span class="token punctuation">.</span><span class="token function">doSomething</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
 
 <h3 id="方式五：事件总线-EventBus"><a href="#方式五：事件总线-EventBus" class="headerlink" title="方式五：事件总线 EventBus"></a>方式五：事件总线 EventBus</h3><p>事件总线是一种解决两个“东西”之间的通讯的方案，这不是 vue 独有的。我不知道其他语言或者平台的事件总线会有什么实现的差别，而 vue 中 EventBus 可以通过订阅发布的设计模式进行实现。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
   <span class="token keyword">const</span> _listeners <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
 
   <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$on</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">eventName<span class="token punctuation">,</span> handler</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
@@ -221,46 +337,46 @@ export default &#123;
   <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
 
   <span class="token comment">// ...</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span></code></pre>
 
 <p>以上便是一个基本的事件总线的实现，这个 EventBus 就是一个事件和消息的处理网关，通过网关实例可以订阅指定的事件和发布指定事件消息，EventBus 负责登记和分发消息，这便是订阅发布的设计模式。所以我也称 EventBus 为事件驿站（只是个人的看法）。</p>
 <p>至于如何使用 EventBus。我们可以先实例一个 EventBus，把它挂载在全局 window 对象下，或者挂载在 Vue 的原型上都是可以的，又或者通过模块导出一个实例。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token class-name">Vue</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span>eventBus <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token class-name">Vue</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span>eventBus <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 
 <p>组件可以通过如此使用。注意，使用 EventBus 时，需要注意在组件销毁的时候一定要卸载监听器，否则有可能造成内存泄漏。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
-  &lt;!-- 组件一，省略内容 --&gt;
-&lt;&#x2F;template&gt;
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token comment">&lt;!-- 组件一，省略内容 --></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
 
-&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  mounted() &#123;
-    &#x2F;&#x2F; 缓存监听器id
-    this.listener &#x3D; this.eventBus.$on(&quot;customEvent&quot;, function () &#123;
-      &#x2F;&#x2F; do something
-    &#125;);
-  &#125;,
-  destroy() &#123;
-    &#x2F;&#x2F; 记得卸载监听器
-    this.eventBus.$off(this.listener);
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 缓存监听器id</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>listener <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>eventBus<span class="token punctuation">.</span><span class="token function">$on</span><span class="token punctuation">(</span><span class="token string">"customEvent"</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token comment">// do something</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">destroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 记得卸载监听器</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>eventBus<span class="token punctuation">.</span><span class="token function">$off</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>listener<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
 
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
-  &lt;!-- 组件二，省略内容 --&gt;
-&lt;&#x2F;template&gt;
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token comment">&lt;!-- 组件二，省略内容 --></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
 
-&lt;script&gt;
-export default &#123;
-  &#x2F;&#x2F; ...
-  mounted() &#123;
-    &#x2F;&#x2F; 发布消息
-    this.eventBus.$emit(&quot;customEvent&quot;);
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// ...</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 发布消息</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>eventBus<span class="token punctuation">.</span><span class="token function">$emit</span><span class="token punctuation">(</span><span class="token string">"customEvent"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
 
 <p>EventBus 也是一种代码解藕的途径，但是这种方式一般在实际开发的项目中不太推荐采用，不推荐的原因有：</p>
 <ul>
@@ -271,124 +387,470 @@ export default &#123;
 <h3 id="方式六：全局数据"><a href="#方式六：全局数据" class="headerlink" title="方式六：全局数据"></a>方式六：全局数据</h3><p>其实这里说的全局数据的方式在上述的方法中也有体现，比如 vuex 或者事件总线都有体现全局数据，只是后两者会更复杂而且具备一定的通知机制。而这里说到的全局数据更简单粗暴一点，我们可以把一个对象挂载在全局 window 下，或者挂载在 Vue 的原型上，又或者通过模块导出，然后各个组件就可以访问到这个对象下的数据了。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>好了，以上便是关于组件间通讯方式的研究结果。</p>
 
-      </div>
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://example.com/2017/09/13/vue%E7%BB%84%E4%BB%B6%E9%97%B4%E9%80%9A%E8%AE%AF/" data-id="cl201vy9n0006uzw4adsz7om6" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
     </div>
-  </div>
-</div>
-<div class="lx-navigation">
-	<div class="lx-cover next lx-cover-sm" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/footer-l.min.jpeg)">
-		<div class="overlay"></div>
-		<a class="copy" href="/2021/04/16/%E7%AB%8B%E5%8D%9A%E4%B8%BA%E8%AF%81%EF%BC%8C%E4%B8%A4%E4%B8%AA%E6%9C%88%E5%95%83%E5%AE%8C%E2%80%9C%E5%A4%A7%E7%8A%80%E7%89%9B%E2%80%9D/">
-			<div class="display-t">
-				<div class="display-tc">
-					<div>
-						<span>Next</span>
-						<h3>温故知新，两个...</h3>
-					</div>
-				</div>
-			</div>
-		</a>
-	</div>
-        <div class="lx-cover prev lx-cover-sm" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/footer-r.min.jpeg)">
-		<div class="overlay"></div>
-		<a class="copy" href="/2017/09/13/v-show-%E4%B8%8E-v-if%E7%9A%84%E5%8C%BA%E5%88%AB/">
-			<div class="display-t">
-				<div class="display-tc">
-					<div>
-						<span>Prev</span>
-						<h3>v-show ...</h3>
-					</div>
-				</div>
-			</div>
-		</a>
-	</div>
-</div>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "author": {
+            "@type": "Person",
+            "name": "Walden"
+        },
+        "headline": "vue组件间通讯",
+        "image": "http://example.com",
+        "keywords": "vue,学习笔记",
+        "genre": "",
+        "datePublished": "2017-09-13",
+        "dateCreated": "2017-09-13",
+        "dateModified": "2022-04-15",
+        "url": "http://example.com/2017/09/13/vue组件间通讯/",
+        "description": "本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。
+其实能够实现组件间通讯的形式有很多，这里列出常用的几种。
+方式一：props父组件通过以下方式向子组件传递数据。
+&lt;ChildComp :count="count" />
 
-</div>
+子组件通过 props 接受父组件的数据。
+&lt;script>
+export default &#123;
+",
+        "wordCount": 1479
+    }
+</script>
 
-<footer>
-  <div>
-  Copyright &copy; 2022.<a href="/">Walden's 自画像</a><br>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme <a href="https://lx.js.org" target="_blank">Lx</a><br>
-  </div>
+</article>
+
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+    
+    </section>
+
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="twitter" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-twitter"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="facebook" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-facebook"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="stack-overflow" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-stack-overflow"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="https://github.com/WaldenLiang" target="_blank" rel="noopener">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2021/04/16/%E7%AB%8B%E5%8D%9A%E4%B8%BA%E8%AF%81%EF%BC%8C%E4%B8%A4%E4%B8%AA%E6%9C%88%E5%95%83%E5%AE%8C%E2%80%9C%E5%A4%A7%E7%8A%80%E7%89%9B%E2%80%9D/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">下一篇</strong>
+        <p class="article-nav-title">
+        
+            温故知新，两个月啃完“大犀牛”
+        
+        </p>
+        <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+    
+    
+        <a href="/2017/09/13/v-show-%E4%B8%8E-v-if%E7%9A%84%E5%8C%BA%E5%88%AB/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title">v-show 与 v-if的区别</p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2022/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%85%B3%E4%BA%8EWebpack%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/project-structure.png)" alt="记一次关于Webpack的项目经历" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></p>
+                            <p class="item-title"><a href="/2022/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%85%B3%E4%BA%8EWebpack%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86/" class="title">记一次关于Webpack的项目经历</a></p>
+                            <p class="item-date"><time datetime="2022-04-11T06:33:01.000Z" itemprop="datePublished">2022-04-11</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2022/04/09/%E5%BD%B1%E5%B8%9D%E7%9A%84%E5%85%AC%E4%B8%BB%E8%A7%82%E5%90%8E%E6%84%9F/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></p>
+                            <p class="item-title"><a href="/2022/04/09/%E5%BD%B1%E5%B8%9D%E7%9A%84%E5%85%AC%E4%B8%BB%E8%A7%82%E5%90%8E%E6%84%9F/" class="title">《影帝的公主》观后感</a></p>
+                            <p class="item-date"><time datetime="2022-04-09T11:53:18.000Z" itemprop="datePublished">2022-04-09</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2022/04/07/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0Promise/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></p>
+                            <p class="item-title"><a href="/2022/04/07/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0Promise/" class="title">手撸 Promise 的思路分享</a></p>
+                            <p class="item-date"><time datetime="2022-04-07T05:58:34.000Z" itemprop="datePublished">2022-04-07</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2021/05/22/%E5%AE%8B%E5%B0%8F%E5%AE%9D%E5%8F%91%E8%B4%A2%E6%97%A5%E8%AE%B0%E8%A7%82%E5%90%8E%E6%84%9F/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></p>
+                            <p class="item-title"><a href="/2021/05/22/%E5%AE%8B%E5%B0%8F%E5%AE%9D%E5%8F%91%E8%B4%A2%E6%97%A5%E8%AE%B0%E8%A7%82%E5%90%8E%E6%84%9F/" class="title">宋小宝发财日记观后感</a></p>
+                            <p class="item-date"><time datetime="2021-05-22T13:22:18.000Z" itemprop="datePublished">2021-05-22</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2021/04/17/javascript%E4%B8%AD%E5%8F%AF%E7%BC%BA%E7%9C%81%E7%9A%84%E5%88%86%E5%8F%B7/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></p>
+                            <p class="item-title"><a href="/2021/04/17/javascript%E4%B8%AD%E5%8F%AF%E7%BC%BA%E7%9C%81%E7%9A%84%E5%88%86%E5%8F%B7/" class="title">javascript中可缺省的分号</a></p>
+                            <p class="item-date"><time datetime="2021-04-17T05:02:26.000Z" itemprop="datePublished">2021-04-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a><span class="category-list-count">4</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">3</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Javascript-Promise/" rel="tag">Javascript,Promise</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript-%E5%A4%A7%E7%8A%80%E7%89%9B%E5%AD%A6%E4%B9%A0%E6%97%A5%E8%AE%B0/" rel="tag">javascript,大犀牛学习日记</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vue-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">vue,学习笔记</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%83%85%E6%84%9F-%E8%A7%82%E5%90%8E%E6%84%9F/" rel="tag">情感,观后感</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86-webpack/" rel="tag">项目经历,webpack</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Javascript-Promise/" style="font-size: 10px;">Javascript,Promise</a> <a href="/tags/javascript-%E5%A4%A7%E7%8A%80%E7%89%9B%E5%AD%A6%E4%B9%A0%E6%97%A5%E8%AE%B0/" style="font-size: 15px;">javascript,大犀牛学习日记</a> <a href="/tags/vue-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="font-size: 20px;">vue,学习笔记</a> <a href="/tags/%E6%83%85%E6%84%9F-%E8%A7%82%E5%90%8E%E6%84%9F/" style="font-size: 10px;">情感,观后感</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86-webpack/" style="font-size: 10px;">项目经历,webpack</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2022 Walden</p>
+                
+                <p>Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="https://github.com/ppoffice" target="_blank">PPOffice</a></p>
+                
+            </div>
+            <div class="footer-plugins">
+              
+    
+
+
+            </div>
+        </div>
+    </div>
 </footer>
 
-</div>
-
-<button class="hamburger hamburger--arrow-r" type="button" title="menu">
-    <div class="hamburger-box">
-      <div class="hamburger-inner"></div>
     </div>
-</button>
-<div class="menu visibility">
-  <div class="menu-head">
-    <span class="layer">
-      <div class="col">
-        <div class="row for-pic">
-          <div class="profile-pic">
-            <a href="/"><img src="https://avatars.githubusercontent.com/u/32896703?v=4" alt="Walden"/></a>
-          </div>
-        </div>
-        <div class="row for-name">
-          <p>Walden</p>
-          <span class="tagline">自画像</span>
-        </div>
-      </div>
-    </span>
-  </div>
-  <nav class="menu-container">
-  <ul class="menu-items">
-    <li><a href="/"><i class="fa fa-home fa-fw"></i>首页</a></li>
-    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-    <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-th-list fa-fw"></i>分类</span>
-        <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></li></ul>
-    </li>
-    <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-bookmark fa-fw"></i>页面</span>
-        <ul>
-          <li><a href="/about/">About</a></li>
-        </ul>
-    </li>
-    <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-link fa-fw"></i>友链</span>
-        <ul>
-          <li> <a href="https://lx.js.org" target="_blank">Theme-Lx</a></li>
-        </ul>
-    </li>
-  </ul>
-  </nav>
-</div>
+    
+    
+    <script>
+    var disqus_shortname = 'walden-liang-blog';
+    
+    
+    var disqus_url = 'http://example.com/2017/09/13/vue%E7%BB%84%E4%BB%B6%E9%97%B4%E9%80%9A%E8%AE%AF/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
 
-<div class="gototop js-top">
-  <a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/js/jquery.easing.min.js"></script>
-<script>
-(function () {
-	"use strict";
-	var goToTop = function() {
-		$(".js-gotop").on("click", function(event){
-			event.preventDefault();
-			$("html, body").animate({
-				scrollTop: $("html").offset().top
-			}, 500, "easeInOutExpo");
-			return false;
-		});
-		$(window).scroll(function(){
-			var $win = $(window);
-			if ($win.scrollTop() > 200) {
-				$(".js-top").addClass("active");
-			} else {
-				$(".js-top").removeClass("active");
-			}
-		});
-	};
-	$(function(){
-		goToTop();
-	});
-}());
-</script>
-<script src="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/js/local.search.min.js"></script>
+
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+
+    
+    
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
 
 </body>
 </html>

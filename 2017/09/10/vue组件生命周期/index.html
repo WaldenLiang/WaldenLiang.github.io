@@ -1,110 +1,226 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="theme-color" content=#58b77a>
-  <title>vue组件生命周期的表现研究 | Walden&#39;s 自画像</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="Walden">
-  <meta name="keywords" content="walden,blog,IT,程序员,Web前端,Web,前端,感性,理性">
-  <meta name="description" content="Walden's 自画像 | 我的身体存在一半理性，一半感性。它们合力扶直我的身体躯壳，以至于二十多年来跌倒还能站起来，继续前行。">
-  <script id="hexo-configurations">
-  var CONFIG = {
-    root: '/',
-    theme: 'lx',
-    version: '0.4.3',
-    localsearch:{
-      "enable": true,
-      "trigger": "auto",
-      "top_n_per_article": 1,
-      "unescape": false,
-      "preload": false
-      },
-    path: 'search.xml'
-  };
+    <meta charset="utf-8" />
+
+    
+
+    
+    <title>vue组件生命周期的表现研究 | Walden&#39;s 自画像</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="keywords" content="vue,学习笔记" />
+    
+    <meta name="description" content="要了解透彻 vue 组件生命周期中每一个阶段做了什么工作，这不是一件简单的事情，这其中可能需要了解 vue 的底层原理，才能明白每一个阶段做了什么工作和为什么需要做这些工作。暂时还没有到研究 vue 底层原理的地步，所以本篇文章仅仅是分析组件或嵌套组件的一些情况。 要了解生命周期就肯定得知道生命周期钩子函数。所谓钩子函数其实际就是一个函数，而“钩子”的表意是该函数与某一个事物或者动作挂钩，当这个事">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue组件生命周期的表现研究">
+<meta property="og:url" content="http://example.com/2017/09/10/vue%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/index.html">
+<meta property="og:site_name" content="Walden&#39;s 自画像">
+<meta property="og:description" content="要了解透彻 vue 组件生命周期中每一个阶段做了什么工作，这不是一件简单的事情，这其中可能需要了解 vue 的底层原理，才能明白每一个阶段做了什么工作和为什么需要做这些工作。暂时还没有到研究 vue 底层原理的地步，所以本篇文章仅仅是分析组件或嵌套组件的一些情况。 要了解生命周期就肯定得知道生命周期钩子函数。所谓钩子函数其实际就是一个函数，而“钩子”的表意是该函数与某一个事物或者动作挂钩，当这个事">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-09-10T03:40:51.000Z">
+<meta property="article:modified_time" content="2022-04-15T06:27:29.410Z">
+<meta property="article:author" content="Walden">
+<meta property="article:tag" content="vue,学习笔记">
+<meta name="twitter:card" content="summary">
+    
+
+    
+        <link rel="alternate" href="/" title="Walden&#39;s 自画像" type="application/atom+xml" />
+    
+
+    
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css" integrity="sha512-vswe+cgvic/XBoF1OcM/TeJ2FW0OofqAVdCZiEYkd6dwGXthvkSFWOoGGJgS2CW70VK5dQM5Oh+7ne47s74VTg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/titillium-web/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+<script src="/libs/jquery/3.5.0/jquery.min.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                        <h2 class="subtitle-wrap">
+                            <p class="subtitle">我的身体存在一半理性，一半感性。它们合力扶直我的身体躯壳，以至于二十多年来跌倒还能站起来，继续前行。</p>
+                        </h2>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                    <ul class="main-nav-list"><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></li><li class="main-nav-list-item"><a class="main-nav-list-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></li></ul>
+                                
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/about/index.html">关于</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
 </script>
 
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/css/main.min.css">
-  
-  <style type="text/css">
-    pre,
-    code {
-      font-family: 'Fira Code', monospace;
-    }
-    html {
-      font-family: sans-serif;
-    }
-    body {
-      font-family: sans-serif;
-    }
-    h1, h2, h3, h4, h5, figure {
-      font-family: sans-serif;
-    }
-    .menu-container{
-      font-family: sans-serif;
-    }
-  </style>
+<script src="/js/insight.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/js/jquery.jside.menu.min.js"></script>
-	<script>
-	$(document).ready(function(){
-	$(".menu-container").jSideMenu({
-	    jSidePosition: "position-right",
-	    jSideSticky: true,
-	    jSideSkin: "",
-	     });
-	}); 
-	</script>
-  
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira Code:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
-<meta name="generator" content="Hexo 6.1.0"></head>
-<body>
-<div class="single">
-<div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off"
-             placeholder="Search..." spellcheck="false"
-             type="text" id="local-search-input">
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <div id="local-search-result"></div>
+</header>
+
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    未分类
+    </h1>
 </div>
 
-<div id="page">
-<div class="header">
-  <div id="lx-aside" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/post_cover.min.jpeg)" data-stellar-background-ratio="0.5">
-    <div class="overlay">
-      <a href="javascript:;" class="popup-trigger" title="search"><i class="menu-item-icon fa fa-search fa-fw"></i></a>
-      <div class="page-title">
-        <div class="avatar"><a href="/"><img src="https://avatars.githubusercontent.com/u/32896703?v=4" alt="Walden"></a></div>
-        <span>2017-09-10</span>
-        <h2>vue组件生命周期的表现研究</h2>
-        <div class="tags"><i class="fa fa-tag"></i><a class="tag-none-link" href="/tags/vue-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">vue,学习笔记</a></div>
+                        <div class="main-body-content">
+                            <article id="post-vue组件生命周期" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
         
-      </div>
-    </div>
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        vue组件生命周期的表现研究
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-meta">
+                
+  <div class="article-date">
+    <i class="fa fa-calendar"></i>
+    <a href="/2017/09/10/vue%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="article-date">
+       <time datetime="2017-09-10T03:40:51.000Z" itemprop="datePublished">2017-09-10</time>
+    </a>
   </div>
+
+
+<div class="article-date">
+  <i class="fa fa-calendar-plus-o"></i>
+  <a href="/2017/09/10/vue%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="article-date">
+     <time datetime="2022-04-15T06:27:29.410Z" itemprop="dateModified">2022-04-15</time>
+  </a>
 </div>
-<div id="lx-main-content">
-  <div class="lx-post">
-    <div class="lx-entry padding">
-      <div>
-        <p>要了解透彻 vue 组件生命周期中每一个阶段做了什么工作，这不是一件简单的事情，这其中可能需要了解 vue 的底层原理，才能明白每一个阶段做了什么工作和为什么需要做这些工作。暂时还没有到研究 vue 底层原理的地步，所以本篇文章仅仅是分析组件或嵌套组件的一些情况。</p>
+
+
+                
+
+                
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link-link" href="/tags/vue-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">vue,学习笔记</a>
+    </div>
+
+                
+
+                
+
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            
+
+            
+
+            
+
+            <p>要了解透彻 vue 组件生命周期中每一个阶段做了什么工作，这不是一件简单的事情，这其中可能需要了解 vue 的底层原理，才能明白每一个阶段做了什么工作和为什么需要做这些工作。暂时还没有到研究 vue 底层原理的地步，所以本篇文章仅仅是分析组件或嵌套组件的一些情况。</p>
 <p>要了解生命周期就肯定得知道生命周期钩子函数。所谓钩子函数其实际就是一个函数，而“钩子”的表意是该函数与某一个事物或者动作挂钩，当这个事物或动作发生指定的情况，与之连接的“钩子”就会被牵动，从而触发函数的执行。这里的表现与 dom 元素的事件监听非常相似，事实上无论是 dom 元素事件监听还是 vue 生命周期钩子都是一种订阅发布的设计模式。</p>
 <p>这里就不展开订阅发布设计模式的说明了，我们只需要知道，vue 生命周期钩子函数会在生命周期的某一刻被 vue 内部逻辑执行。</p>
 <p>这里实现一个超超超简单的例子。</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 定义一个组件实例</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 定义一个组件实例</span>
 <span class="token keyword">const</span> vueComp <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
   <span class="token function">created</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
     console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"vueComp is created."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -124,7 +240,7 @@
   <span class="token comment">// mounted前准备</span>
   <span class="token comment">// 完成挂载后，手动拉一下钩子</span>
   compConfig<span class="token punctuation">.</span><span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">&#125;</span></code></pre>
 
 <p>以上就是最根本的钩子函数的执行过程，当然 vue 的组件创建和挂载渲染流程肯定会复杂很多，但是道理应该是相似的。</p>
 <p>那么 vue 有哪些生命周期钩子呢？</p>
@@ -145,17 +261,17 @@
 </ul>
 <p>注意，<code>activated</code> 和 <code>deactivated</code> 只有在 <code>keep-alive</code> 包裹下的组件中才会被触发，否则不会被触发，它们有点类似<code>onShow</code> 和 <code>onHide</code>的意思。因为 <code>keep-alive</code> 包裹下的组件是会被缓存起来的，创建和挂载的相关钩子只会被触发一次，而 <code>activated</code> 和 <code>deactivated</code> 分别在每一次的显示和隐藏的时候都会被触发，所以某些初始化和复位的操作可以在这两个钩子函数中处理。</p>
 <p>在一个完整的生命周期中组件的钩子函数的执行顺序是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">                                                    deactivated
+<pre class="language-none"><code class="language-none">                                                    deactivated
                                                      |       |
 beforeCreate -&gt; created -&gt; beforeMount -&gt; mounted -&gt; activated --------&gt; beforeDestroy -&gt; destroyed
                                                                 |     |
-                                                      beforeUpdate -&gt; updated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+                                                      beforeUpdate -&gt; updated</code></pre>
 
 <p>目前阶段，值得研究的应该是更新的钩子函数。在 vue 的机制中，<code>beforeUpdate</code> 和 <code>updated</code> 只有在组件挂载完成后，即<code>mounted</code>被执行后，该组件的 data 数据发生变化并且驱动视图变化才会触发这两个钩子函数，如果仅仅是 data 数据发生变化，但是不影响视图，那么这两个钩子是不会被触发的。</p>
 <p>或者直接通过 dom 操作来改变视图，这也不会触发更新的钩子函数，因为这种行为是脱离了 vue 的生命周期控制的。</p>
 <p>另外，还有一点很重要，那就是组件的更新和渲染是异步的。关于异步又会牵扯出一大堆关于事件循环和执行栈的知识，这里暂不研究，实际上我还不是很了解。我们暂时只理解为，vue 会把所有同步操作执行完成后，关于 data 数据的修改会被整合成一次操作，最后再去更新视图，然后触发更新的钩子函数。</p>
 <p>简单的写一个例子：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
   count<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
 <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
 
@@ -169,7 +285,7 @@ data<span class="token punctuation">.</span>count<span class="token operator">++
 <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
 data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
-data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+data<span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span></code></pre>
 
 <p>以上例子可以很初步的了解到异步渲染的原理。目前关于 vue 组件的更新钩子函数我们暂时掌握到这里，等后续深入 vue 原理的时候再补充内容。</p>
 <p>而其他的钩子函数，我们主要留意一下几点应该没什么问题了。</p>
@@ -180,221 +296,221 @@ data<span class="token punctuation">.</span>count<span class="token operator">++
 <li>在 <code>beforeCreate</code> 中无法读取 <code>this</code> 对象；</li>
 </ol>
 <p>分析完一个组件的生命周期，我们来分析一下组件嵌套的情况下，父子组件的生命周期钩子函数的执行顺序。我们先写一个例子。</p>
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;!-- App.vue --&gt;
-&lt;template&gt;
-  &lt;div id&#x3D;&quot;app&quot;&gt;
-    &lt;button @click&#x3D;&quot;toggleChildCompVisible&quot;&gt;Toggle&lt;&#x2F;button&gt;
-    &lt;button @click&#x3D;&quot;changeCount&quot;&gt;Change count&lt;&#x2F;button&gt;
-    &lt;button @click&#x3D;&quot;changeCount2&quot;&gt;Change count2&lt;&#x2F;button&gt;
-    &lt;button @click&#x3D;&quot;changeCount3&quot;&gt;Change count3&lt;&#x2F;button&gt;
-    &lt;button @click&#x3D;&quot;changeCountTroughRefMethod&quot;&gt;Change count4&lt;&#x2F;button&gt;
-    &lt;ParentComp
-      ref&#x3D;&quot;parentComp&quot;
-      v-if&#x3D;&quot;isShow&quot;
-      :count&#x3D;&quot;count&quot;
-      :count2&#x3D;&quot;count2&quot;
-      :count3&#x3D;&quot;count3&quot;
-    &#x2F;&gt;
-  &lt;&#x2F;div&gt;
-&lt;&#x2F;template&gt;
+<p><code>App.vue</code></p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>app<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>toggleChildCompVisible<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Toggle<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>changeCount<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Change count<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>changeCount2<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Change count2<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>changeCount3<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Change count3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">@click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>changeCountTroughRefMethod<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Change count4<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ParentComp</span>
+      <span class="token attr-name">ref</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>parentComp<span class="token punctuation">"</span></span>
+      <span class="token attr-name">v-if</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>isShow<span class="token punctuation">"</span></span>
+      <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span>
+      <span class="token attr-name">:count2</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count2<span class="token punctuation">"</span></span>
+      <span class="token attr-name">:count3</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count3<span class="token punctuation">"</span></span>
+    <span class="token punctuation">/></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
 
-&lt;script&gt;
-import ParentComp from &quot;.&#x2F;components&#x2F;ParentComp&quot;;
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">import</span> ParentComp <span class="token keyword">from</span> <span class="token string">"./components/ParentComp"</span><span class="token punctuation">;</span>
 
-export default &#123;
-  name: &quot;App&quot;,
-  components: &#123;
-    ParentComp,
-  &#125;,
-  data() &#123;
-    return &#123;
-      isShow: true,
-      count: 0,
-      count2: 0,
-      count3: 0,
-      count4: 0,
-    &#125;;
-  &#125;,
-  methods: &#123;
-    toggleChildCompVisible() &#123;
-      this.isShow &#x3D; !this.isShow;
-    &#125;,
-    changeCount() &#123;
-      this.count++;
-    &#125;,
-    changeCount2() &#123;
-      this.count2++;
-    &#125;,
-    changeCount3() &#123;
-      this.count3++;
-    &#125;,
-    changeCountTroughRefMethod() &#123;
-      this.count4++;
-      this.$refs.parentComp.changeCount(this.count4);
-    &#125;,
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  name<span class="token operator">:</span> <span class="token string">"App"</span><span class="token punctuation">,</span>
+  components<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    ParentComp<span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">return</span> <span class="token punctuation">&#123;</span>
+      isShow<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+      count<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+      count2<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+      count3<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+      count4<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  methods<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">toggleChildCompVisible</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>isShow <span class="token operator">=</span> <span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>isShow<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token function">changeCount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token function">changeCount2</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count2<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token function">changeCount3</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count3<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token function">changeCountTroughRefMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count4<span class="token operator">++</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>$refs<span class="token punctuation">.</span>parentComp<span class="token punctuation">.</span><span class="token function">changeCount</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>count4<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
 
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;!-- &#x2F;components&#x2F;ParentComp.vue --&gt;
-&lt;template&gt;
-  &lt;div&gt;
+<p><code>/components/ParentComp.vue</code></p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">></span></span>
     ParentComp
-    &lt;ChildComp ref&#x3D;&quot;childComp&quot; :count&#x3D;&quot;count&quot; :count2&#x3D;&quot;count2&quot; &#x2F;&gt;
-  &lt;&#x2F;div&gt;
-&lt;&#x2F;template&gt;
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">ref</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>childComp<span class="token punctuation">"</span></span> <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span> <span class="token attr-name">:count2</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count2<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
 
-&lt;script&gt;
-import ChildComp from &quot;.&#x2F;ChildComp&quot;;
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">import</span> ChildComp <span class="token keyword">from</span> <span class="token string">"./ChildComp"</span><span class="token punctuation">;</span>
 
-export default &#123;
-  name: &quot;ParentComp&quot;,
-  components: &#123;
-    ChildComp,
-  &#125;,
-  props: &#123;
-    count: &#123;
-      type: Number,
-    &#125;,
-    count2: &#123;
-      type: Number,
-    &#125;,
-    count3: &#123;
-      type: Number,
-    &#125;,
-  &#125;,
-  beforeCreate() &#123;
-    console.log(&quot;ParentComp beforeCreate&quot;);
-  &#125;,
-  created() &#123;
-    console.log(&quot;ParentComp created&quot;);
-  &#125;,
-  beforeMount() &#123;
-    console.log(&quot;ParentComp beforeMount&quot;);
-  &#125;,
-  mounted() &#123;
-    console.log(&quot;ParentComp mounted&quot;);
-  &#125;,
-  beforeUpdate() &#123;
-    console.log(&quot;ParentComp beforeUpdate&quot;);
-  &#125;,
-  updated() &#123;
-    console.log(&quot;ParentComp updated&quot;);
-  &#125;,
-  activated() &#123;
-    console.log(&quot;ParentComp activated&quot;);
-  &#125;,
-  deactivated() &#123;
-    console.log(&quot;ParentComp deactivated&quot;);
-  &#125;,
-  beforeDestroy() &#123;
-    console.log(&quot;ParentComp beforeDestroy&quot;);
-  &#125;,
-  destroyed() &#123;
-    console.log(&quot;ParentComp destroyed&quot;);
-  &#125;,
-  methods: &#123;
-    changeCount(num) &#123;
-      this.$refs.childComp.changeCount(num);
-    &#125;,
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  name<span class="token operator">:</span> <span class="token string">"ParentComp"</span><span class="token punctuation">,</span>
+  components<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    ChildComp<span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  props<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    count<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    count2<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    count3<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeCreate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp beforeCreate"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">created</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp created"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeMount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp beforeMount"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp mounted"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeUpdate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp beforeUpdate"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">updated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp updated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">activated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp activated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">deactivated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp deactivated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeDestroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp beforeDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">destroyed</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ParentComp destroyed"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  methods<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">changeCount</span><span class="token punctuation">(</span><span class="token parameter">num</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>$refs<span class="token punctuation">.</span>childComp<span class="token punctuation">.</span><span class="token function">changeCount</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
 
-<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;!-- &#x2F;components&#x2F;ChildComp.vue --&gt;
-&lt;template&gt;
-  &lt;div&gt;ChildComp&#123;&#123; count &#125;&#125; &#123;&#123; count4 &#125;&#125;&lt;&#x2F;div&gt;
-&lt;&#x2F;template&gt;
+<p><code>/components/ChildComp.vue</code></p>
+<pre class="language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">></span></span>ChildComp&#123;&#123; count &#125;&#125; &#123;&#123; count4 &#125;&#125;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span>
 
-&lt;script&gt;
-export default &#123;
-  name: &quot;ChildComp&quot;,
-  props: &#123;
-    count: &#123;
-      type: Number,
-    &#125;,
-    count2: &#123;
-      type: Number,
-    &#125;,
-  &#125;,
-  data() &#123;
-    return &#123;
-      count4: 0,
-    &#125;;
-  &#125;,
-  beforeCreate() &#123;
-    console.log(&quot;ChildComp beforeCreate&quot;);
-  &#125;,
-  created() &#123;
-    console.log(&quot;ChildComp created&quot;);
-  &#125;,
-  beforeMount() &#123;
-    console.log(&quot;ChildComp beforeMount&quot;);
-  &#125;,
-  mounted() &#123;
-    console.log(&quot;ChildComp mounted&quot;);
-  &#125;,
-  beforeUpdate() &#123;
-    console.log(&quot;ChildComp beforeUpdate&quot;);
-  &#125;,
-  updated() &#123;
-    console.log(&quot;ChildComp updated&quot;);
-  &#125;,
-  activated() &#123;
-    console.log(&quot;ChildComp activated&quot;);
-  &#125;,
-  deactivated() &#123;
-    console.log(&quot;ChildComp deactivated&quot;);
-  &#125;,
-  beforeDestroy() &#123;
-    console.log(&quot;ChildComp beforeDestroy&quot;);
-  &#125;,
-  destroyed() &#123;
-    console.log(&quot;ChildComp destroyed&quot;);
-  &#125;,
-  methods: &#123;
-    changeCount(num) &#123;
-      this.count4 &#x3D; num;
-    &#125;,
-  &#125;,
-&#125;;
-&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">&#123;</span>
+  name<span class="token operator">:</span> <span class="token string">"ChildComp"</span><span class="token punctuation">,</span>
+  props<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    count<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    count2<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      type<span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">return</span> <span class="token punctuation">&#123;</span>
+      count4<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeCreate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp beforeCreate"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">created</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp created"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeMount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp beforeMount"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">mounted</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp mounted"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeUpdate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp beforeUpdate"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">updated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp updated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">activated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp activated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">deactivated</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp deactivated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">beforeDestroy</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp beforeDestroy"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token function">destroyed</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"ChildComp destroyed"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  methods<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">changeCount</span><span class="token punctuation">(</span><span class="token parameter">num</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>count4 <span class="token operator">=</span> num<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></code></pre>
 
 <p>页面初次渲染的时候能够获得以下日志：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ParentComp beforeCreate
+<pre class="language-bash" data-language="bash"><code class="language-bash">ParentComp beforeCreate
 ParentComp created
 ParentComp beforeMount
 ChildComp beforeCreate
 ChildComp created
 ChildComp beforeMount
 ChildComp mounted
-ParentComp mounted<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+ParentComp mounted</code></pre>
 
 <p>点击 Toggle 按钮后隐藏组件后，能够获得以下日志：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ParentComp beforeDestroy
+<pre class="language-bash" data-language="bash"><code class="language-bash">ParentComp beforeDestroy
 ChildComp beforeDestroy
 ChildComp destroyed
-ParentComp destroyed<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+ParentComp destroyed</code></pre>
 
 <p>如果考虑 <code>keep-alive</code> 的话，ChildComp activated 和 ParentComp activated 会依次在 ParentComp mounted 后执行。而隐藏组件的话，并不会销毁组件，所以日志如下：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ChildComp deactivated
-ParentComp deactivated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ChildComp deactivated
+ParentComp deactivated</code></pre>
 
 <p>然后验证了关于更新钩子的一些情况，分别依次点击按钮 Change count，Change count2，Change count3，Change count4，能够获得已下日志：</p>
 <p>Change count：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ParentComp beforeUpdate
+<pre class="language-bash" data-language="bash"><code class="language-bash">ParentComp beforeUpdate
 ChildComp beforeUpdate
 ChildComp updated
-ParentComp updated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+ParentComp updated</code></pre>
 
 <p>Change count2：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ParentComp beforeUpdate
-ParentComp updated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ParentComp beforeUpdate
+ParentComp updated</code></pre>
 
 <p>点击 Change count3 没有任何日志产生。</p>
 <p>Change count4：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ChildComp beforeUpdate
-ChildComp updated<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="language-bash" data-language="bash"><code class="language-bash">ChildComp beforeUpdate
+ChildComp updated</code></pre>
 
 <p>分析可以得出以下结论：</p>
 <ul>
@@ -403,124 +519,457 @@ ChildComp updated<span aria-hidden="true" class="line-numbers-rows"><span></span
 </ul>
 <p>以上就是本篇文章关于 vue 组件的生命周期的所有研究。关于“每个生命周期 vue 内部做了什么工作”，这需要深入 vue 的源码研究，往后会另开一文来记录。此外还有 mixin 的情况分析，这也会新起一篇文章来记录。</p>
 
-      </div>
+        </div>
+        <footer class="article-footer">
+            
+
+
+
+    <a data-url="http://example.com/2017/09/10/vue%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" data-id="cl201vy9m0005uzw44sg48ctq" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+        </footer>
     </div>
-  </div>
-</div>
-<div class="lx-navigation">
-	<div class="lx-cover next lx-cover-sm" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/footer-l.min.jpeg)">
-		<div class="overlay"></div>
-		<a class="copy" href="/2017/09/13/v-show-%E4%B8%8E-v-if%E7%9A%84%E5%8C%BA%E5%88%AB/">
-			<div class="display-t">
-				<div class="display-tc">
-					<div>
-						<span>Next</span>
-						<h3>v-show ...</h3>
-					</div>
-				</div>
-			</div>
-		</a>
-	</div>
-        <div class="lx-cover prev lx-cover-sm" style="background-image: url(https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/images/footer-r.min.jpeg)">
-		<div class="overlay"></div>
-		<a class="copy" href="#">
-			<div class="display-t">
-				<div class="display-tc">
-					<div>
-						<span>Prev</span>
-						<h3>没有更早的文章</h3>
-					</div>
-				</div>
-			</div>
-		</a>
-	</div>
-</div>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "author": {
+            "@type": "Person",
+            "name": "Walden"
+        },
+        "headline": "vue组件生命周期的表现研究",
+        "image": "http://example.com",
+        "keywords": "vue,学习笔记",
+        "genre": "",
+        "datePublished": "2017-09-10",
+        "dateCreated": "2017-09-10",
+        "dateModified": "2022-04-15",
+        "url": "http://example.com/2017/09/10/vue组件生命周期/",
+        "description": "要了解透彻 vue 组件生命周期中每一个阶段做了什么工作，这不是一件简单的事情，这其中可能需要了解 vue 的底层原理，才能明白每一个阶段做了什么工作和为什么需要做这些工作。暂时还没有到研究 vue 底层原理的地步，所以本篇文章仅仅是分析组件或嵌套组件的一些情况。
+要了解生命周期就肯定得知道生命周期钩子函数。所谓钩子函数其实际就是一个函数，而“钩子”的表意是该函数与某一个事物或者动作挂钩，当这个事",
+        "wordCount": 2624
+    }
+</script>
 
-</div>
+</article>
 
-<footer>
-  <div>
-  Copyright &copy; 2022.<a href="/">Walden's 自画像</a><br>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme <a href="https://lx.js.org" target="_blank">Lx</a><br>
-  </div>
+    <section id="comments">
+    
+        
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+    
+    </section>
+
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="twitter" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-twitter"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="facebook" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-facebook"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="stack-overflow" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-stack-overflow"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="https://github.com/WaldenLiang" target="_blank" rel="noopener">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="weibo" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-weibo"></i>
+                    </a>
+                </li>
+                
+            
+                
+                <li>
+                    <a class="social-tooltip" title="rss" href="/" target="_blank" rel="noopener">
+                        <i class="icon fa fa-rss"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/09/13/v-show-%E4%B8%8E-v-if%E7%9A%84%E5%8C%BA%E5%88%AB/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">下一篇</strong>
+        <p class="article-nav-title">
+        
+            v-show 与 v-if的区别
+        
+        </p>
+        <i class="icon fa fa-chevron-right" id="icon-chevron-right"></i>
+    </a>
+    
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2022/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%85%B3%E4%BA%8EWebpack%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86/" class="thumbnail">
+    
+    
+        <span style="background-image:url(/images/project-structure.png)" alt="记一次关于Webpack的项目经历" class="thumbnail-image"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></p>
+                            <p class="item-title"><a href="/2022/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%85%B3%E4%BA%8EWebpack%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86/" class="title">记一次关于Webpack的项目经历</a></p>
+                            <p class="item-date"><time datetime="2022-04-11T06:33:01.000Z" itemprop="datePublished">2022-04-11</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2022/04/09/%E5%BD%B1%E5%B8%9D%E7%9A%84%E5%85%AC%E4%B8%BB%E8%A7%82%E5%90%8E%E6%84%9F/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></p>
+                            <p class="item-title"><a href="/2022/04/09/%E5%BD%B1%E5%B8%9D%E7%9A%84%E5%85%AC%E4%B8%BB%E8%A7%82%E5%90%8E%E6%84%9F/" class="title">《影帝的公主》观后感</a></p>
+                            <p class="item-date"><time datetime="2022-04-09T11:53:18.000Z" itemprop="datePublished">2022-04-09</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2022/04/07/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0Promise/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></p>
+                            <p class="item-title"><a href="/2022/04/07/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0Promise/" class="title">手撸 Promise 的思路分享</a></p>
+                            <p class="item-date"><time datetime="2022-04-07T05:58:34.000Z" itemprop="datePublished">2022-04-07</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2021/05/22/%E5%AE%8B%E5%B0%8F%E5%AE%9D%E5%8F%91%E8%B4%A2%E6%97%A5%E8%AE%B0%E8%A7%82%E5%90%8E%E6%84%9F/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></p>
+                            <p class="item-title"><a href="/2021/05/22/%E5%AE%8B%E5%B0%8F%E5%AE%9D%E5%8F%91%E8%B4%A2%E6%97%A5%E8%AE%B0%E8%A7%82%E5%90%8E%E6%84%9F/" class="title">宋小宝发财日记观后感</a></p>
+                            <p class="item-date"><time datetime="2021-05-22T13:22:18.000Z" itemprop="datePublished">2021-05-22</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2021/04/17/javascript%E4%B8%AD%E5%8F%AF%E7%BC%BA%E7%9C%81%E7%9A%84%E5%88%86%E5%8F%B7/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></p>
+                            <p class="item-title"><a href="/2021/04/17/javascript%E4%B8%AD%E5%8F%AF%E7%BC%BA%E7%9C%81%E7%9A%84%E5%88%86%E5%8F%B7/" class="title">javascript中可缺省的分号</a></p>
+                            <p class="item-date"><time datetime="2021-04-17T05:02:26.000Z" itemprop="datePublished">2021-04-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a><span class="category-list-count">4</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">3</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Javascript-Promise/" rel="tag">Javascript,Promise</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript-%E5%A4%A7%E7%8A%80%E7%89%9B%E5%AD%A6%E4%B9%A0%E6%97%A5%E8%AE%B0/" rel="tag">javascript,大犀牛学习日记</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vue-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">vue,学习笔记</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%83%85%E6%84%9F-%E8%A7%82%E5%90%8E%E6%84%9F/" rel="tag">情感,观后感</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86-webpack/" rel="tag">项目经历,webpack</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-float">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Javascript-Promise/" style="font-size: 10px;">Javascript,Promise</a> <a href="/tags/javascript-%E5%A4%A7%E7%8A%80%E7%89%9B%E5%AD%A6%E4%B9%A0%E6%97%A5%E8%AE%B0/" style="font-size: 15px;">javascript,大犀牛学习日记</a> <a href="/tags/vue-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" style="font-size: 20px;">vue,学习笔记</a> <a href="/tags/%E6%83%85%E6%84%9F-%E8%A7%82%E5%90%8E%E6%84%9F/" style="font-size: 10px;">情感,观后感</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86-webpack/" style="font-size: 10px;">项目经历,webpack</a>
+        </div>
+    </div>
+
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2022 Walden</p>
+                
+                <p>Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="https://github.com/ppoffice" target="_blank">PPOffice</a></p>
+                
+            </div>
+            <div class="footer-plugins">
+              
+    
+
+
+            </div>
+        </div>
+    </div>
 </footer>
 
-</div>
-
-<button class="hamburger hamburger--arrow-r" type="button" title="menu">
-    <div class="hamburger-box">
-      <div class="hamburger-inner"></div>
     </div>
-</button>
-<div class="menu visibility">
-  <div class="menu-head">
-    <span class="layer">
-      <div class="col">
-        <div class="row for-pic">
-          <div class="profile-pic">
-            <a href="/"><img src="https://avatars.githubusercontent.com/u/32896703?v=4" alt="Walden"/></a>
-          </div>
-        </div>
-        <div class="row for-name">
-          <p>Walden</p>
-          <span class="tagline">自画像</span>
-        </div>
-      </div>
-    </span>
-  </div>
-  <nav class="menu-container">
-  <ul class="menu-items">
-    <li><a href="/"><i class="fa fa-home fa-fw"></i>首页</a></li>
-    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-    <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-th-list fa-fw"></i>分类</span>
-        <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></li></ul>
-    </li>
-    <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-bookmark fa-fw"></i>页面</span>
-        <ul>
-          <li><a href="/about/">About</a></li>
-        </ul>
-    </li>
-    <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-link fa-fw"></i>友链</span>
-        <ul>
-          <li> <a href="https://lx.js.org" target="_blank">Theme-Lx</a></li>
-        </ul>
-    </li>
-  </ul>
-  </nav>
-</div>
+    
+    
+    <script>
+    var disqus_shortname = 'walden-liang-blog';
+    
+    
+    var disqus_url = 'http://example.com/2017/09/10/vue%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/';
+    
+    (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
 
-<div class="gototop js-top">
-  <a href="#" class="js-gotop"><i class="fa fa-arrow-up"></i></a>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/js/jquery.easing.min.js"></script>
-<script>
-(function () {
-	"use strict";
-	var goToTop = function() {
-		$(".js-gotop").on("click", function(event){
-			event.preventDefault();
-			$("html, body").animate({
-				scrollTop: $("html").offset().top
-			}, 500, "easeInOutExpo");
-			return false;
-		});
-		$(window).scroll(function(){
-			var $win = $(window);
-			if ($win.scrollTop() > 200) {
-				$(".js-top").addClass("active");
-			} else {
-				$(".js-top").removeClass("active");
-			}
-		});
-	};
-	$(function(){
-		goToTop();
-	});
-}());
-</script>
-<script src="https://cdn.jsdelivr.net/npm/theme-lx@0.4.3/source/dist/js/local.search.min.js"></script>
+
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+
+    
+    
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
 
 </body>
 </html>
