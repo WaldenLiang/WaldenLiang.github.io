@@ -102,7 +102,7 @@
       <div>
         <p>本文依旧是对 Vue 的基本使用的研究，不会过深的探究其原理。今天研究的内容是 Vue 组件间的通讯方式。</p>
 <p>其实能够实现组件间通讯的形式有很多，这里列出常用的几种。</p>
-<h3 id="方式一：props"><a href="#方式一：props" class="headerlink" title="方式一：props"></a>方式一：props</h3><p>父组件通过一下方式向子组件传递数据。</p>
+<h3 id="方式一：props"><a href="#方式一：props" class="headerlink" title="方式一：props"></a>方式一：props</h3><p>父组件通过以下方式向子组件传递数据。</p>
 <pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ChildComp</span> <span class="token attr-name">:count</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <p>子组件通过 <code>props</code> 接受父组件的数据。</p>
@@ -119,7 +119,7 @@ export default &#123;
 &#125;;
 &lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>props 方式是由 vue 的响应式机制驱动的，而其响应式机制的实现是依靠原生 javascript api <code>Object.defineProperty</code> 重写数据模型的属性的 getter 和 setter 方法实现的，其中的原理于代理模式相似，这里不做详细的研究。</p>
+<p>props 方式是由 vue 的响应式机制驱动的，而其响应式机制的实现是依靠原生 javascript api <code>Object.defineProperty</code> 代理数据模型的属性的 getter 和 setter 方法实现的，其中的原理与代理模式相似，这里不做详细的研究。</p>
 <h3 id="方式二：组件事件监听与-emit"><a href="#方式二：组件事件监听与-emit" class="headerlink" title="方式二：组件事件监听与$emit"></a>方式二：组件事件监听与$emit</h3><p>父组件通过<code>@</code>符或者<code>v-on:</code>来监听子组件的事件。</p>
 <pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
   &lt;ChildComp @cry&#x3D;&quot;onChildCry&quot; &#x2F;&gt;
@@ -148,7 +148,7 @@ export default &#123;
 &#125;;
 &lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>这种方式的表现形式与 dom0 级事件监听很类似，但是其实质却有着绝对的差别。这里简单地分析一下 vue 的组件事件监听的原理。</p>
+<p>这种方式的表现形式与 dom0 级事件监听很类似，但是其实质是不一样的。这里简单地分析一下 vue 的组件事件监听的原理。</p>
 <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 假设这是父组件实例</span>
 <span class="token keyword">const</span> parentCompIns <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
   <span class="token function">onChildCry</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
@@ -176,7 +176,101 @@ export default &#123;
 <span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h3 id="方式三：vuex-状态管理器"><a href="#方式三：vuex-状态管理器" class="headerlink" title="方式三：vuex 状态管理器"></a>方式三：vuex 状态管理器</h3><p>状态管理器 vuex 也可以实现组件间的通讯，而且这是一个非常好的代码解藕的途径。vuex 的实现原理应该是围绕着两个核心概念，分别是数据中心和通知。这里不会详细讨论 vuex 的使用，后面会单独开一篇文章来记录。</p>
-<h3 id="方式四：-refs-调用组件实例方法"><a href="#方式四：-refs-调用组件实例方法" class="headerlink" title="方式四：$refs 调用组件实例方法"></a>方式四：$refs 调用组件实例方法</h3><h3 id="方式五：事件驿站-EventBus"><a href="#方式五：事件驿站-EventBus" class="headerlink" title="方式五：事件驿站 EventBus"></a>方式五：事件驿站 EventBus</h3><h3 id="方式六：全局数据"><a href="#方式六：全局数据" class="headerlink" title="方式六：全局数据"></a>方式六：全局数据</h3>
+<h3 id="方式四：-refs-调用组件实例方法"><a href="#方式四：-refs-调用组件实例方法" class="headerlink" title="方式四：$refs 调用组件实例方法"></a>方式四：$refs 调用组件实例方法</h3><p>vue 中可以通过 $refs 获取一个组件的实例，然后可以通过实例调用实例方法实现组件间的通讯。</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
+  &lt;ChildComp ref&#x3D;&quot;childComp&quot; &#x2F;&gt;
+&lt;&#x2F;template&gt;
+
+&lt;script&gt;
+export default &#123;
+  &#x2F;&#x2F; ...
+  mounted() &#123;
+    this.$refs.childComp.doSomething(...args);
+  &#125;,
+&#125;;
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="方式五：事件总线-EventBus"><a href="#方式五：事件总线-EventBus" class="headerlink" title="方式五：事件总线 EventBus"></a>方式五：事件总线 EventBus</h3><p>事件总线是一种解决两个“东西”之间的通讯的方案，这不是 vue 独有的。我不知道其他语言或者平台的事件总线会有什么实现的差别，而 vue 中 EventBus 可以通过订阅发布的设计模式进行实现。</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  <span class="token keyword">const</span> _listeners <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$on</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">eventName<span class="token punctuation">,</span> handler</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// validate 做入参的判断，eventName是字符串，handler为function</span>
+    <span class="token comment">// 生成监听器的id，可用于移除操作</span>
+    <span class="token keyword">const</span> id <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 注册事件</span>
+    _listeners<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+      id<span class="token punctuation">,</span>
+      eventName<span class="token punctuation">,</span>
+      <span class="token comment">// 维护handler的执行上下文</span>
+      <span class="token function-variable function">handler</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter"><span class="token operator">...</span>args</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">return</span> id<span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$emit</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">eventName<span class="token punctuation">,</span> <span class="token operator">...</span>args</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// do validating</span>
+    _listeners
+      <span class="token punctuation">.</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">item</span><span class="token punctuation">)</span> <span class="token operator">=></span> item<span class="token punctuation">.</span>eventName <span class="token operator">===</span> eventName<span class="token punctuation">)</span>
+      <span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter"><span class="token punctuation">&#123;</span> handler <span class="token punctuation">&#125;</span></span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token operator">...</span>args<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">$off</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">id</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 移除操作</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// ...</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>以上便是一个基本的事件总线的实现，这个 EventBus 就是一个事件和消息的处理网关，通过网关实例可以订阅指定的事件和发布指定事件消息，EventBus 负责登记和分发消息，这便是订阅发布的设计模式。所以我也称 EventBus 为事件驿站（只是个人的看法）。</p>
+<p>至于如何使用 EventBus。我们可以先实例一个 EventBus，把它挂载在全局 window 对象下，或者挂载在 Vue 的原型上都是可以的，又或者通过模块导出一个实例。</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token class-name">Vue</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span>eventBus <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">EventBus</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>组件可以通过如此使用。注意，使用 EventBus 时，需要注意在组件销毁的时候一定要卸载监听器，否则有可能造成内存泄漏。</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
+  &lt;!-- 组件一，省略内容 --&gt;
+&lt;&#x2F;template&gt;
+
+&lt;script&gt;
+export default &#123;
+  &#x2F;&#x2F; ...
+  mounted() &#123;
+    &#x2F;&#x2F; 缓存监听器id
+    this.listener &#x3D; this.eventBus.$on(&quot;customEvent&quot;, function () &#123;
+      &#x2F;&#x2F; do something
+    &#125;);
+  &#125;,
+  destroy() &#123;
+    &#x2F;&#x2F; 记得卸载监听器
+    this.eventBus.$off(this.listener);
+  &#125;,
+&#125;;
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
+  &lt;!-- 组件二，省略内容 --&gt;
+&lt;&#x2F;template&gt;
+
+&lt;script&gt;
+export default &#123;
+  &#x2F;&#x2F; ...
+  mounted() &#123;
+    &#x2F;&#x2F; 发布消息
+    this.eventBus.$emit(&quot;customEvent&quot;);
+  &#125;,
+&#125;;
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>EventBus 也是一种代码解藕的途径，但是这种方式一般在实际开发的项目中不太推荐采用，不推荐的原因有：</p>
+<ul>
+<li>可追溯性和可读性差；</li>
+<li>需要卸载监听器，否则一直占用资源，严重还会造成内存泄漏；</li>
+</ul>
+<p>所以，EventBus 应该被视作一种保留方案，通常那些不好通过状态管理器 vuex 实现，或者组件间跨度太大的情况下才考虑使用 EventBus。</p>
+<h3 id="方式六：全局数据"><a href="#方式六：全局数据" class="headerlink" title="方式六：全局数据"></a>方式六：全局数据</h3><p>其实这里说的全局数据的方式在上述的方法中也有体现，比如 vuex 或者事件总线都有体现全局数据，只是后两者会更复杂而且具备一定的通知机制。而这里说到的全局数据更简单粗暴一点，我们可以把一个对象挂载在全局 window 下，或者挂载在 Vue 的原型上，又或者通过模块导出，然后各个组件就可以访问到这个对象下的数据了。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>好了，以上便是关于组件间通讯方式的研究结果。</p>
+
       </div>
     </div>
   </div>
@@ -243,20 +337,20 @@ export default &#123;
   </div>
   <nav class="menu-container">
   <ul class="menu-items">
-    <li><a href="/"><i class="fa fa-home fa-fw"></i>Home</a></li>
-    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+    <li><a href="/"><i class="fa fa-home fa-fw"></i>首页</a></li>
+    <li><a href="/archives/"><i class="fa fa-archive fa-fw"></i>归档</a></li>
     <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-th-list fa-fw"></i>Categories</span>
+      <i class="fa fa-th-list fa-fw"></i>分类</span>
         <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%84%9F%E6%80%A7/">感性</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%90%86%E6%80%A7/">理性</a></li></ul>
     </li>
     <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-bookmark fa-fw"></i>Pages</span>
+      <i class="fa fa-bookmark fa-fw"></i>页面</span>
         <ul>
           <li><a href="/about/">About</a></li>
         </ul>
     </li>
     <li class="has-sub"><span class="dropdown-heading">
-      <i class="fa fa-link fa-fw"></i>Friends</span>
+      <i class="fa fa-link fa-fw"></i>友链</span>
         <ul>
           <li> <a href="https://lx.js.org" target="_blank">Theme-Lx</a></li>
         </ul>
