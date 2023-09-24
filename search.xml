@@ -1558,4 +1558,22 @@ server<span class="token punctuation">.</span><span class="token function">start
 <p>我们暂时不深究上面两段代码的所有含义，我们只需要关注<code>_c(compName, &#123;&#125;)</code>和<code>_c(&#39;Comp1&#39;)</code>。可见 compName 是一个变量而非明确的字符串，所以代码运行时是可以通过数据来决定<code>compName</code>到底是一个什么值，从而实现动态组件的目的。</p>
 <h3 id="异步组件"><a href="#异步组件" class="headerlink" title="异步组件"></a>异步组件</h3>]]></content>
   </entry>
+  <entry>
+    <title>开源和学习计划</title>
+    <url>/2023/09/24/%E5%BC%80%E6%BA%90%E5%92%8C%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/</url>
+    <content><![CDATA[<h2 id="开源计划"><a href="#开源计划" class="headerlink" title="开源计划"></a>开源计划</h2><p>计划开发一个 React 前端开发相关工具的开源项目，暂时称之为 lumos。</p>
+<h3 id="lumos-ui"><a href="#lumos-ui" class="headerlink" title="@lumos/ui"></a>@lumos/ui</h3><p>lumos ui 是一套 React UI 组件库。</p>
+<h3 id="lumos-bootstrap"><a href="#lumos-bootstrap" class="headerlink" title="@lumos/bootstrap"></a>@lumos/bootstrap</h3><p>React web 应用的启动范式，并且进行技术收敛和依赖收敛。</p>
+<h3 id="lumos-hooks"><a href="#lumos-hooks" class="headerlink" title="@lumos/hooks"></a>@lumos/hooks</h3><p>常用 hooks。</p>
+<h3 id="lumos-cli"><a href="#lumos-cli" class="headerlink" title="@lumos/cli"></a>@lumos/cli</h3><p>一些命令行工具。</p>
+<h3 id="lumos-cpus"><a href="#lumos-cpus" class="headerlink" title="@lumos/cpus"></a>@lumos/cpus</h3><p>一些常用的工具方法。</p>
+<h3 id="lumos-define-api"><a href="#lumos-define-api" class="headerlink" title="@lumos/define-api"></a>@lumos/define-api</h3><p>针对monorepo项目， @lumos/define-api可以提供跨应用可复用的网络请求api定义，比如通过define-api定义出的网络请求api可以同时提供给react应用，vue应用和小程序使用。</p>
+<h3 id="lumos-starter"><a href="#lumos-starter" class="headerlink" title="@lumos/starter"></a>@lumos/starter</h3><p>生成项目模板。</p>
+<h2 id="学习计划"><a href="#学习计划" class="headerlink" title="学习计划"></a>学习计划</h2><h3 id="rust"><a href="#rust" class="headerlink" title="rust"></a>rust</h3><p>计划学习一门低级语言。</p>
+<h3 id="tauri-apps"><a href="#tauri-apps" class="headerlink" title="tauri-apps"></a>tauri-apps</h3><p>想接触桌面端的开发。</p>
+]]></content>
+      <tags>
+        <tag>学习,开源,成长</tag>
+      </tags>
+  </entry>
 </search>
